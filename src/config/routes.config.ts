@@ -10,9 +10,9 @@ import ExpenseCategoryService from '../modules/expense-category/ExpenseCategoryS
 import ExpenseCategoryController from '../modules/expense-category/ExpenseCategoryController';
 import SupplierController from '../modules/supplier/SupplierController';
 import SupplierRoute from '../modules/supplier/SupplierRoute';
-import ExpenseCategoryRoute from '../modules/expense-category/ExpenseCategoryRoute';
 import IncomeService from '../modules/income/IncomeService';
 import IncomeController from '../modules/income/IncomeController';
+import ExpenseCategoryRoute from '../modules/expense-category/ExpenseCategoryRoute';
 import IncomeRoute from '../modules/income/IncomeRoute';
 
 const routes = Router();
