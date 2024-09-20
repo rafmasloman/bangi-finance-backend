@@ -1,16 +1,16 @@
 import { Router } from 'express';
 import AuthService from '../modules/auth/AuthService';
-import AuthController from '../modules/auth/AuthController';
 import AuthRoute from '../modules/auth/AuthRoute';
 import UserService from '../modules/user/UserService';
 import UserController from '../modules/user/UserController';
 import UserRoute from '../modules/user/UserRoute';
+import AuthController from '../modules/auth/AuthController';
+import SupplierService from '../modules/supplier/SupplierService';
 import ExpenseCategoryService from '../modules/expense-category/ExpenseCategoryService';
 import ExpenseCategoryController from '../modules/expense-category/ExpenseCategoryController';
-import ExpenseCategoryRoute from '../modules/expense-category/ExpenseCategoryRoute';
-import SupplierService from '../modules/supplier/SupplierService';
 import SupplierController from '../modules/supplier/SupplierController';
 import SupplierRoute from '../modules/supplier/SupplierRoute';
+import ExpenseCategoryRoute from '../modules/expense-category/ExpenseCategoryRoute';
 
 const routes = Router();
 
