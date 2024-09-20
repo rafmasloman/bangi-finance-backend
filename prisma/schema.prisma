@@ -27,11 +27,15 @@ model Users {
 
 model Income {
   id String @id @default(uuid())
+  date DateTime
   itemSales Int
   itemDiscount Int?
   billDiscount Int?
   focItem Int?
   focBill Int
+  totalSales Int
+  totalCollection Int
+  ppn Int
   service Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
