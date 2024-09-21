@@ -12,10 +12,14 @@ class IncomeController {
 
   constructor(incomeService: IncomeService) {
     this.incomeService = incomeService;
-    this.createIncome = this.createIncome.bind(this);
+    // this.createIncome = this.createIncome.bind(this);
+    // this.getAllIncome = this.getAllIncome.bind(this);
+    // this.updateIncome = this.updateIncome.bind(this);
+    // this.deleteIncome = this.deleteIncome.bind(this);
+    // this.getTotalIncomeAnalytics = this.getTotalIncomeAnalytics.bind(this);
   }
 
-  async createIncome(req: Request, res: Response, next: NextFunction) {
+  createIncome = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const {
         date,
@@ -41,9 +45,9 @@ class IncomeController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getAllIncome(req: Request, res: Response, next: NextFunction) {
+  getAllIncome = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const incomes = await this.incomeService.getAllIncomes();
 
@@ -51,9 +55,9 @@ class IncomeController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async updateIncome(req: Request, res: Response, next: NextFunction) {
+  updateIncome = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const {
@@ -80,9 +84,9 @@ class IncomeController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async deleteIncome(req: Request, res: Response, next: NextFunction) {
+  deleteIncome = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
 
@@ -92,13 +96,13 @@ class IncomeController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getTotalIncomeAnalytics(
+  getTotalIncomeAnalytics = async (
     req: Request,
     res: Response,
     next: NextFunction,
-  ) {
+  ) => {
     try {
       const incomes = await this.incomeService.getIncomesDataAnalytics();
 
@@ -106,7 +110,7 @@ class IncomeController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
 
 export default IncomeController;
