@@ -58,7 +58,7 @@ class AuthService {
 
       const token = generateToken({ id: user.id, role: user.role });
 
-      return token;
+      return { token };
     } catch (error) {
       console.log('error : ', error);
 
