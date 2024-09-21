@@ -6,9 +6,9 @@ class UserRoute {
   userController: UserController;
   router: Router;
 
-  constructor(userController: UserController, router: Router) {
+  constructor(userController: UserController) {
     this.userController = userController;
-    this.router = router;
+    this.router = Router();
     this.registerRoute();
   }
 

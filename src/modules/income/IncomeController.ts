@@ -12,6 +12,7 @@ class IncomeController {
 
   constructor(incomeService: IncomeService) {
     this.incomeService = incomeService;
+    this.createIncome = this.createIncome.bind(this);
   }
 
   async createIncome(req: Request, res: Response, next: NextFunction) {

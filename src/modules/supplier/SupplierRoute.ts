@@ -6,9 +6,9 @@ class SupplierRoute {
   private supplierController: SupplierController;
   private route: Router;
 
-  constructor(supplierController: SupplierController, route: Router) {
+  constructor(supplierController: SupplierController) {
     this.supplierController = supplierController;
-    this.route = route;
+    this.route = Router();
   }
 
   createSupplierRoute() {

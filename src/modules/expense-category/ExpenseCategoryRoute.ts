@@ -6,9 +6,11 @@ class ExpenseCategoryRoute {
   private expenseCatController: ExpenseCategoryController;
   private router: Router;
 
-  constructor(expenseCatController: ExpenseCategoryController, route: Router) {
+  constructor(expenseCatController: ExpenseCategoryController) {
     this.expenseCatController = expenseCatController;
-    this.router = route;
+
+    this.router = Router();
+
     this.registerRoute();
   }
 

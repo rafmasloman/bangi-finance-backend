@@ -6,9 +6,9 @@ class IncomeRoute {
   private incomeController: IncomeController;
   private router: Router;
 
-  constructor(incomeController: IncomeController, router: Router) {
+  constructor(incomeController: IncomeController) {
     this.incomeController = incomeController;
-    this.router = router;
+    this.router = Router();
   }
 
   createIncomeRoute() {

@@ -6,9 +6,9 @@ class ExpenseRoute {
   private expenseController: ExpenseController;
   private route: Router;
 
-  constructor(expenseController: ExpenseController, route: Router) {
+  constructor(expenseController: ExpenseController) {
     this.expenseController = expenseController;
-    this.route = route;
+    this.route = Router();
     this.registerRoute();
   }
 

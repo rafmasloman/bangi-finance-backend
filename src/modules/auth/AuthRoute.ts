@@ -5,9 +5,9 @@ class AuthRoute {
   authController: AuthController;
   route: Router;
 
-  constructor(authController: AuthController, route: Router) {
+  constructor(authController: AuthController) {
     this.authController = authController;
-    this.route = route;
+    this.route = Router();
     this.registerRoute();
   }
 

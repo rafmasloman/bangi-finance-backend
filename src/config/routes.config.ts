@@ -1,4 +1,3 @@
-import { Router } from 'express';
 import AuthService from '../modules/auth/AuthService';
 import AuthRoute from '../modules/auth/AuthRoute';
 import UserService from '../modules/user/UserService';
@@ -14,9 +13,9 @@ import IncomeService from '../modules/income/IncomeService';
 import IncomeController from '../modules/income/IncomeController';
 import ExpenseCategoryRoute from '../modules/expense-category/ExpenseCategoryRoute';
 import IncomeRoute from '../modules/income/IncomeRoute';
+import { Router } from 'express';
 
 const routes = Router();
-
 // Inisialisasi services dan controllers
 const AuthServices = new AuthService();
 const UserServices = new UserService();
@@ -33,15 +32,14 @@ const ExpenseCategoryControllers = new ExpenseCategoryController(
 const IncomeControllers = new IncomeController(IncomeServices);
 
 // Route Definitions
-const AuthRoutes = new AuthRoute(AuthControllers, routes);
-const UserRoutes = new UserRoute(UserControllers, routes);
+const AuthRoutes = new AuthRoute(AuthControllers);
+const UserRoutes = new UserRoute(UserControllers);
 const ExpenseCategoryRoutes = new ExpenseCategoryRoute(
   ExpenseCategoryControllers,
-  routes,
 );
-const SupplierRoutes = new SupplierRoute(SupplierControllers, routes);
+const SupplierRoutes = new SupplierRoute(SupplierControllers);
 
-const IncomeRoutes = new IncomeRoute(IncomeControllers, routes);
+const IncomeRoutes = new IncomeRoute(IncomeControllers);
 
 // Daftarkan route di sini tanpa prefix
 routes.use('/auth', AuthRoutes.getRoute());
