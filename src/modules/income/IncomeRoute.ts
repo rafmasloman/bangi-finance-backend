@@ -14,7 +14,7 @@ class IncomeRoute {
   createIncomeRoute() {
     return this.router.post(
       '/',
-      authMiddleware,
+      // authMiddleware,
       this.incomeController.createIncome,
     );
   }
@@ -22,7 +22,7 @@ class IncomeRoute {
   getAllIncomesRoute() {
     return this.router.get(
       '/',
-      authMiddleware,
+      // authMiddleware,
       this.incomeController.getAllIncome,
     );
   }
@@ -30,7 +30,7 @@ class IncomeRoute {
   updateIncome() {
     return this.router.put(
       '/:id',
-      authMiddleware,
+      // authMiddleware,
       this.incomeController.updateIncome,
     );
   }
@@ -38,15 +38,15 @@ class IncomeRoute {
   deleteIncome() {
     return this.router.delete(
       '/:id',
-      authMiddleware,
+      // authMiddleware,
       this.incomeController.deleteIncome,
     );
   }
 
   getTotalIncomeAnalytics() {
     return this.router.get(
-      '/',
-      authMiddleware,
+      '/analytics',
+      // authMiddleware,
       this.incomeController.getTotalIncomeAnalytics,
     );
   }
