@@ -132,10 +132,10 @@ class IncomeService {
         0,
       );
 
-      const ppnAnalytics = totalSalesAnalytics * 10 * 0.1;
+      const ppnAnalytics = totalSalesAnalytics * 0.1;
 
-      const managementServiceAnalytics = totalServicesAnalytics * 40 * 0.4;
-      const employeServiceAnalytics = totalServicesAnalytics * 60 * 0.6;
+      const managementServiceAnalytics = totalServicesAnalytics * 0.4;
+      const employeServiceAnalytics = totalServicesAnalytics * 0.6;
 
       return {
         salesAnalystics: {
