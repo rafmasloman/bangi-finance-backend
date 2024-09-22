@@ -5,27 +5,17 @@ class IncomeService {
   async createIncome(payload: CreateIncomeDTO) {
     try {
       let {
-        focBill,
+        focBill = 0,
         itemSales,
         service,
-        billDiscount,
-        focItem,
-        itemDiscount,
+        billDiscount = 0,
+        focItem = 0,
+        itemDiscount = 0,
         date,
       } = payload;
 
-      let totalSales = 0;
-
-      if (!focItem || !itemDiscount || !billDiscount) {
-        focItem = 0;
-        itemDiscount = 0;
-        billDiscount = 0;
-
-        totalSales +=
-          itemSales - focBill - focItem - itemDiscount - billDiscount;
-      }
-
-      totalSales += itemSales - focBill - focItem - itemDiscount - billDiscount;
+      const totalSales =
+        itemSales - focBill - focItem - itemDiscount - billDiscount;
 
       const ppn = (totalSales * 10) / 100;
       const totalCollection = totalSales + ppn + service;
@@ -64,27 +54,17 @@ class IncomeService {
   async updateIncome(id: string, payload: CreateIncomeDTO) {
     try {
       let {
-        focBill,
+        focBill = 0,
         itemSales,
         service,
-        billDiscount,
-        focItem,
-        itemDiscount,
+        billDiscount = 0,
+        focItem = 0,
+        itemDiscount = 0,
         date,
       } = payload;
 
-      let totalSales = 0;
-
-      if (!focItem || !itemDiscount || !billDiscount) {
-        focItem = 0;
-        itemDiscount = 0;
-        billDiscount = 0;
-
-        totalSales +=
-          itemSales - focBill - focItem - itemDiscount - billDiscount;
-      }
-
-      totalSales += itemSales - focBill - focItem - itemDiscount - billDiscount;
+      const totalSales =
+        itemSales - focBill - focItem - itemDiscount - billDiscount;
 
       const ppn = (totalSales * 10) / 100;
       const totalCollection = totalSales + ppn + service;

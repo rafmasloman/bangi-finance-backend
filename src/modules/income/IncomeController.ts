@@ -20,6 +20,8 @@ class IncomeController {
   }
 
   createIncome = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('body : ', req.body);
+
     try {
       const {
         date,
@@ -43,6 +45,8 @@ class IncomeController {
 
       return sendSuccessResponse(res, income, READ_INCOMES_MESSAGE, 201);
     } catch (error) {
+      console.log('error : ', error);
+
       next(error);
     }
   };

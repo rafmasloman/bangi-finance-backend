@@ -32,7 +32,7 @@ model Income {
   itemDiscount Int?
   billDiscount Int?
   focItem Int?
-  focBill Int
+  focBill Int?
   totalSales Int
   totalCollection Int
   ppn Int
