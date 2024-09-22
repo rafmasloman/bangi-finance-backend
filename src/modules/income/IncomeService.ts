@@ -117,16 +117,43 @@ class IncomeService {
         (collection) => collection.totalCollection,
       );
 
-      const totalSalesCount = collectTotalSales.reduce(
+      const totalSalesAnalytics = collectTotalSales.reduce(
         (acc, currentValue) => acc + currentValue,
         0,
       );
 
-      const ppnCount = (totalSalesCount * 10) / 100;
+      const totalServicesAnalytics = collectServices.reduce(
+        (acc, currentValue) => acc + currentValue,
+        0,
+      );
+
+      const totalCollectionAnalytics = collectTotalCollection.reduce(
+        (acc, currentValue) => acc + currentValue,
+        0,
+      );
+
+      const ppnAnalytics = totalSalesAnalytics * 10 * 0.1;
+
+      const managementServiceAnalytics = totalServicesAnalytics * 40 * 0.4;
+      const employeServiceAnalytics = totalServicesAnalytics * 60 * 0.6;
 
       return {
-        totalSalesCount,
-        ppnCount,
+        salesAnalystics: {
+          total: totalSalesAnalytics,
+        },
+        servicesAnalytics: {
+          total: totalServicesAnalytics,
+          category: {
+            management: managementServiceAnalytics,
+            employe: employeServiceAnalytics,
+          },
+        },
+        collectionAnalytics: {
+          total: totalCollectionAnalytics,
+        },
+        ppnAnalytics: {
+          total: ppnAnalytics,
+        },
       };
     } catch (error) {
       throw error;
