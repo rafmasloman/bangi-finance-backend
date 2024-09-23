@@ -1,11 +1,12 @@
+import { CreateSupplierCompanyDTO } from '../../dto/SupplierCompanyDTO';
 import prisma from '../../libs/prisma/orm.libs';
 
 class SupplierCompanyService {
-  async createSupplierCompany() {
+  async createSupplierCompany(payload: CreateSupplierCompanyDTO) {
     try {
       const supplierCompany = await prisma.supplierCompany.create({
         data: {
-          name: '',
+          ...payload,
         },
       });
 
@@ -24,8 +25,6 @@ class SupplierCompanyService {
       throw error;
     }
   }
-
-  
 }
 
 export default SupplierCompanyService;
