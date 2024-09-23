@@ -1,5 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateSupplierCompanyDTO } from '../../dto/SupplierCompanyDTO';
+import {
+  CreateSupplierCompanyDTO,
+  UpdateSupplierCompanyDTO,
+} from '../../dto/SupplierCompanyDTO';
 import SupplierCompanyService from './SupplierCompanyService';
 import { sendSuccessResponse } from '../../helpers/response.helper';
 
@@ -45,6 +48,51 @@ class SupplierCompanyController {
         res,
         supplierCompanies,
         'Supplier Companies fetched succesfully',
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateSupplierCompany = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { name, supplierId }: UpdateSupplierCompanyDTO = req.body;
+      const { id } = req.params;
+      const supplierCompanies =
+        await this.supplierCompanyService.updateSuplierCompany(Number(id), {
+          name,
+        });
+
+      return sendSuccessResponse(
+        res,
+        supplierCompanies,
+        'Supplier Companies updated successfully',
+        200,
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteSupplierCompany = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+      const supplierCompanies =
+        await this.supplierCompanyService.deleteSuplierCompany(Number(id));
+
+      return sendSuccessResponse(
+        res,
+        supplierCompanies,
+        'Supplier Companies deleted successfully',
+        200,
       );
     } catch (error) {
       next(error);

@@ -27,9 +27,27 @@ class SupplierCompanyRoutes {
     );
   }
 
+  updateRoute() {
+    return this.router.get(
+      '/:id',
+      //   authMiddleware,
+      this.supplierCompanyController.updateSupplierCompany,
+    );
+  }
+
+  deleteRoute() {
+    return this.router.get(
+      '/:id',
+      //   authMiddleware,
+      this.supplierCompanyController.deleteSupplierCompany,
+    );
+  }
+
   registerRoute() {
     this.createRoute();
     this.getAllRoute();
+    this.updateRoute();
+    this.deleteRoute();
 
     return this.router;
   }
