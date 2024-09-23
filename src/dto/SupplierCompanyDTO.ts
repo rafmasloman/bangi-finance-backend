@@ -1,6 +1,7 @@
 export interface CreateSupplierCompanyDTO {
   name: string;
 }
-export interface UpdateSupplieCompanDTO {
+export interface UpdateSupplierCompanyDTO {
   name?: string;
+  supplierId?: string;
 }
