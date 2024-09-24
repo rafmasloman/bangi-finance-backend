@@ -8,13 +8,9 @@ class SupplierController {
 
   constructor(supplierService: SupplierService) {
     this.supplierService = supplierService;
-    this.createSupplier = this.createSupplier.bind(this);
-    this.getAllSuppliers = this.getAllSuppliers.bind(this);
-    this.updateSupplier = this.updateSupplier.bind(this);
-    this.deleteSupplier = this.deleteSupplier.bind(this);
   }
 
-  async createSupplier(req: Request, res: Response, next: NextFunction) {
+  createSupplier = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const {
         discount,
@@ -52,9 +48,9 @@ class SupplierController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getAllSuppliers(req: Request, res: Response, next: NextFunction) {
+  getAllSuppliers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { page, pageSize } = req.query;
 
@@ -73,9 +69,9 @@ class SupplierController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async updateSupplier(req: Request, res: Response, next: NextFunction) {
+  updateSupplier = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
 
@@ -116,9 +112,9 @@ class SupplierController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async deleteSupplier(req: Request, res: Response, next: NextFunction) {
+  deleteSupplier = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const supplier = await this.supplierService.deleteSupplier(id);
@@ -130,7 +126,7 @@ class SupplierController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
 
 export default SupplierController;

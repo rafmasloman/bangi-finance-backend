@@ -7,13 +7,9 @@ class ExpenseController {
 
   constructor(expenseService: ExpenseService) {
     this.expenseService = expenseService;
-    this.createExpense = this.createExpense.bind(this);
-    this.getAllExpenses = this.getAllExpenses.bind(this);
-    this.getDetailExpense = this.getDetailExpense.bind(this);
-    this.deleteExpense = this.deleteExpense.bind(this);
   }
 
-  async createExpense(req: Request, res: Response, next: NextFunction) {
+  createExpense = async (req: Request, res: Response, next: NextFunction) => {
     const { evidence, expenseCategoryId, note, price }: CreateExpenseDTO =
       req.body;
     try {
@@ -32,9 +28,9 @@ class ExpenseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getAllExpenses(req: Request, res: Response, next: NextFunction) {
+  getAllExpenses = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const expenses = await this.expenseService.getAllExpenses();
 
@@ -46,9 +42,13 @@ class ExpenseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getDetailExpense(req: Request, res: Response, next: NextFunction) {
+  getDetailExpense = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const { id } = req.params;
 
@@ -62,9 +62,9 @@ class ExpenseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async updateExpense(req: Request, res: Response, next: NextFunction) {
+  updateExpense = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { evidence, expenseCategoryId, note, price }: UpdateExpenseDTO =
       req.body;
@@ -84,9 +84,9 @@ class ExpenseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async deleteExpense(req: Request, res: Response, next: NextFunction) {
+  deleteExpense = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
       const expense = await this.expenseService.deleteExpense(id);
@@ -98,7 +98,7 @@ class ExpenseController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
 
 export default ExpenseController;

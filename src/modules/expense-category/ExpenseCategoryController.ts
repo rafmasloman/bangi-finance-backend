@@ -8,12 +8,16 @@ import { sendSuccessResponse } from '../../helpers/response.helper';
 
 class ExpenseCategoryController {
   private expenseCat: ExpenseCategoryService;
+
   constructor(expenseCat: ExpenseCategoryService) {
     this.expenseCat = expenseCat;
-    this.createExpenseCategory = this.createExpenseCategory.bind(this);
   }
 
-  async createExpenseCategory(req: Request, res: Response, next: NextFunction) {
+  createExpenseCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     const { name }: CreateExpenseCategoryDTO = req.body;
     try {
       const expenseCategory = await this.expenseCat.createExpenseCategory({
@@ -28,13 +32,13 @@ class ExpenseCategoryController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async getAllExpenseCategories(
+  getAllExpenseCategories = async (
     req: Request,
     res: Response,
     next: NextFunction,
-  ) {
+  ) => {
     try {
       const expenseCategories = await this.expenseCat.getAllExpenseCategory();
 
@@ -46,9 +50,13 @@ class ExpenseCategoryController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async updateExpenseCategory(req: Request, res: Response, next: NextFunction) {
+  updateExpenseCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     const { id } = req.params;
     const { name }: UpdateExpenseCategoryDTO = req.body;
     const expenseCatId = Number(id);
@@ -66,9 +74,13 @@ class ExpenseCategoryController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async deleteExpenseCategory(req: Request, res: Response, next: NextFunction) {
+  deleteExpenseCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const { id } = req.params;
       const expenseCategory = await this.expenseCat.deleteExpenseCategory(
@@ -83,7 +95,7 @@ class ExpenseCategoryController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
 
 export default ExpenseCategoryController;
