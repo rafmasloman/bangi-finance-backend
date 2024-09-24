@@ -74,6 +74,20 @@ class ExpenseCategoryService {
       throw error;
     }
   }
+
+  async deleteExpenseCategory(id: number) {
+    try {
+      const expenseCategory = await prisma.expenseCategory.delete({
+        where: {
+          id,
+        },
+      });
+
+      return expenseCategory;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default ExpenseCategoryService;

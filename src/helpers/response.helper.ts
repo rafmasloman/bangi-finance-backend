@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 export const sendSuccessResponse = (
   res: Response,
-  data: any,
+  data: any = null,
   message: string = 'Request Succesfull',
   statusCode: number = 200,
 ) => {

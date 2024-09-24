@@ -4,6 +4,7 @@ import {
   CreateExpenseCategoryDTO,
   UpdateExpenseCategoryDTO,
 } from '../../dto/ExpenseDTO';
+import { sendSuccessResponse } from '../../helpers/response.helper';
 
 class ExpenseCategoryController {
   private expenseCat: ExpenseCategoryService;
@@ -63,7 +64,24 @@ class ExpenseCategoryController {
         data: expenseCategory,
       });
     } catch (error) {
-      throw error;
+      next(error);
+    }
+  }
+
+  async deleteExpenseCategory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const expenseCategory = await this.expenseCat.deleteExpenseCategory(
+        Number(id),
+      );
+
+      return sendSuccessResponse(
+        res,
+        null,
+        'Expense Category deleted succesfully',
+      );
+    } catch (error) {
+      next(error);
     }
   }
 }

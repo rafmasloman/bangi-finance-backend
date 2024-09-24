@@ -17,7 +17,7 @@ class ExpenseCategoryRoute {
   private createExpenseCatRoute() {
     return this.router.post(
       '/',
-      authMiddleware,
+      // authMiddleware,
       this.expenseCatController.createExpenseCategory,
     );
   }
@@ -25,7 +25,7 @@ class ExpenseCategoryRoute {
   private getAllExpenseCatRoute() {
     return this.router.get(
       '/',
-      authMiddleware,
+      // authMiddleware,
       this.expenseCatController.getAllExpenseCategories,
     );
   }
@@ -33,8 +33,15 @@ class ExpenseCategoryRoute {
   private updateExpenseCatRoute() {
     return this.router.put(
       '/:id',
-      authMiddleware,
+      // authMiddleware,
       this.expenseCatController.updateExpenseCategory,
+    );
+  }
+
+  private deleteExpenseCatRoute() {
+    return this.router.delete(
+      '/',
+      this.expenseCatController.deleteExpenseCategory,
     );
   }
 
@@ -42,6 +49,7 @@ class ExpenseCategoryRoute {
     this.createExpenseCatRoute();
     this.getAllExpenseCatRoute();
     this.updateExpenseCatRoute();
+    this.deleteExpenseCatRoute();
 
     return this.router;
   }
