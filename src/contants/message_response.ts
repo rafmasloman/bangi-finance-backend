@@ -13,3 +13,12 @@ export const READ_EXPENSE_TOTAL_EACH_DATA_MESSAGE =
 export const CREATE_EXPENSES_MESSAGE = 'expenses created succesfully';
 export const UPDATE_EXPENSES_MESSAGE = 'expenses updated succesfully';
 export const DELETE_EXPENSES_MESSAGE = 'expenses deleted succesfully';
+
+export const READ_SUPPLIERS_MESSAGE = 'suppliers fetched succesfully';
+export const READ_SUPPLIER_DETAIL_MESSAGE =
+  'supplier detail fetched succesfully';
+export const READ_SUPLIER_TOTAL_EACH_DATA_MESSAGE =
+  'suppliers total each fetched succesfully';
+export const CREATE_SUPPLIER_MESSAGE = 'suppliers created succesfully';
+export const UPDATE_SUPPLIER_MESSAGE = 'suppliers updated succesfully';
+export const DELETE_SUPPLIER_MESSAGE = 'suppliers deleted succesfully';
