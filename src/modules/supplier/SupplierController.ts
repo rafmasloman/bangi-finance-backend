@@ -4,6 +4,7 @@ import { CreateSupplierDTO, UpdateSupplierDTO } from '../../dto/SupplierDTO';
 import { countSupplierTotalPrice } from '../../utils/supplier.utils';
 import { sendSuccessResponse } from '../../helpers/response.helper';
 import {
+  CREATE_SUPPLIER_MESSAGE,
   DELETE_SUPPLIER_MESSAGE,
   READ_EXPENSES_MESSAGE,
   READ_SUPPLIER_DETAIL_MESSAGE,
@@ -45,14 +46,12 @@ class SupplierController {
         supplier.ppn,
       );
 
-      return res.json({
-        statusCode: 201,
-        message: 'Supplier data created',
-        data: {
-          ...supplier,
-          totalPrice,
-        },
-      });
+      return sendSuccessResponse(
+        res,
+        { supplier, totalPrice },
+        CREATE_SUPPLIER_MESSAGE,
+        201,
+      );
     } catch (error) {
       next(error);
     }
@@ -119,7 +118,11 @@ class SupplierController {
         supplier.ppn,
       );
 
-      return sendSuccessResponse(res, supplier, UPDATE_SUPPLIER_MESSAGE);
+      return sendSuccessResponse(
+        res,
+        { supplier, totalPrice },
+        UPDATE_SUPPLIER_MESSAGE,
+      );
     } catch (error) {
       next(error);
     }
