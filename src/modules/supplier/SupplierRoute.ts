@@ -14,7 +14,7 @@ class SupplierRoute {
   createSupplierRoute() {
     return this.route.post(
       '/',
-      authMiddleware,
+      // authMiddleware,
       this.supplierController.createSupplier,
     );
   }
@@ -22,15 +22,19 @@ class SupplierRoute {
   getAllSupplierRoute() {
     return this.route.get(
       '/',
-      authMiddleware,
+      // authMiddleware,
       this.supplierController.getAllSuppliers,
     );
+  }
+
+  getDetailSupplierRoute() {
+    return this.route.get('/:id', this.supplierController.getDetailSupplier);
   }
 
   updateSupplierRoute() {
     return this.route.put(
       '/:id',
-      authMiddleware,
+      // authMiddleware,
       this.supplierController.updateSupplier,
     );
   }
@@ -38,13 +42,17 @@ class SupplierRoute {
   deleteSupplierRoute() {
     return this.route.delete(
       '/:id',
-      authMiddleware,
+      // authMiddleware,
       this.supplierController.deleteSupplier,
     );
   }
 
   registerRoute() {
     this.createSupplierRoute();
+    this.getDetailSupplierRoute();
+    this.getAllSupplierRoute();
+    this.updateSupplierRoute();
+    this.deleteSupplierRoute();
 
     return this.route;
   }

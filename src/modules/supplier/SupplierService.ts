@@ -57,6 +57,20 @@ class SupplierService {
     }
   }
 
+  async getSupplierDetail(id: string) {
+    try {
+      const supplier = await prisma.supplier.findFirst({
+        where: {
+          id,
+        },
+      });
+
+      return supplier;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async updateSupplier(id: string, params: UpdateSupplierDTO) {
     const {
       discount,

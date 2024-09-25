@@ -2,6 +2,13 @@ import { NextFunction, Request, Response } from 'express';
 import SupplierService from './SupplierService';
 import { CreateSupplierDTO, UpdateSupplierDTO } from '../../dto/SupplierDTO';
 import { countSupplierTotalPrice } from '../../utils/supplier.utils';
+import { sendSuccessResponse } from '../../helpers/response.helper';
+import {
+  DELETE_SUPPLIER_MESSAGE,
+  READ_EXPENSES_MESSAGE,
+  READ_SUPPLIER_DETAIL_MESSAGE,
+  UPDATE_SUPPLIER_MESSAGE,
+} from '../../contants/message_response';
 
 class SupplierController {
   private supplierService: SupplierService;
@@ -21,6 +28,7 @@ class SupplierController {
         quantity,
         supplierCompanyId,
       }: CreateSupplierDTO = req.body;
+
       const supplier = await this.supplierService.createSupplier({
         discount,
         evidence,
@@ -59,13 +67,23 @@ class SupplierController {
         Number(pageSize),
       );
 
-      return res.json({
-        message: 'Suppliers Success to get',
-        data: suppliers.supplier,
-        page,
-        pageSize,
-        totalPages: suppliers.totalSupplier,
-      });
+      return sendSuccessResponse(res, suppliers, READ_EXPENSES_MESSAGE);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getDetailSupplier = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+
+      const supplier = await this.supplierService.getSupplierDetail(id);
+
+      return sendSuccessResponse(res, supplier, READ_SUPPLIER_DETAIL_MESSAGE);
     } catch (error) {
       next(error);
     }
@@ -101,14 +119,7 @@ class SupplierController {
         supplier.ppn,
       );
 
-      return res.json({
-        statusCode: 201,
-        message: 'Supplier data updated',
-        data: {
-          ...supplier,
-          totalPrice,
-        },
-      });
+      return sendSuccessResponse(res, supplier, UPDATE_SUPPLIER_MESSAGE);
     } catch (error) {
       next(error);
     }
@@ -119,10 +130,7 @@ class SupplierController {
       const { id } = req.params;
       const supplier = await this.supplierService.deleteSupplier(id);
 
-      return res.json({
-        statsuCode: 200,
-        message: 'Supplier Deleted',
-      });
+      return sendSuccessResponse(res, null, DELETE_SUPPLIER_MESSAGE);
     } catch (error) {
       next(error);
     }
