@@ -51,6 +51,10 @@ class IncomeRoute {
     );
   }
 
+  getIncomeDetail() {
+    return this.router.get('/:id', this.incomeController.getIncomeDetail);
+  }
+
   registerRoute() {
     this.createIncomeRoute();
     this.getAllIncomesRoute();

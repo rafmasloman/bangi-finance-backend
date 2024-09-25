@@ -107,6 +107,20 @@ class IncomeService {
     }
   }
 
+  async getIncomeDetail(id: string) {
+    try {
+      const income = await prisma.income.findFirst({
+        where: {
+          id,
+        },
+      });
+
+      return income;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getIncomesDataAnalytics() {
     try {
       const incomes = await prisma.income.findMany();

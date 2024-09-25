@@ -61,6 +61,17 @@ class IncomeController {
     }
   };
 
+  getIncomeDetail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const incomes = await this.incomeService.getIncomeDetail(id);
+
+      return sendSuccessResponse(res, incomes, READ_INCOMES_MESSAGE, 200);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateIncome = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
