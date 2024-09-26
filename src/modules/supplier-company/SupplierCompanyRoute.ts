@@ -35,7 +35,7 @@ class SupplierCompanyRoutes {
   }
 
   updateRoute() {
-    return this.router.get(
+    return this.router.put(
       '/:id',
       //   authMiddleware,
       this.supplierCompanyController.updateSupplierCompany,
@@ -43,7 +43,7 @@ class SupplierCompanyRoutes {
   }
 
   deleteRoute() {
-    return this.router.get(
+    return this.router.delete(
       '/:id',
       //   authMiddleware,
       this.supplierCompanyController.deleteSupplierCompany,
