@@ -19,6 +19,20 @@ class SupplierCompanyService {
     }
   }
 
+  async getSupplierCompanyDetail(id: string) {
+    try {
+      const supplierCompany = await prisma.supplierCompany.findFirst({
+        where: {
+          id: Number(id),
+        },
+      });
+
+      return supplierCompany;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getAllSuplierCompany() {
     try {
       const companies = await prisma.supplierCompany.findMany();

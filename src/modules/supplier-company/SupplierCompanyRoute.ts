@@ -27,6 +27,13 @@ class SupplierCompanyRoutes {
     );
   }
 
+  getDetailRoute() {
+    return this.router.get(
+      '/:id',
+      this.supplierCompanyController.getDetailSupplierCompany,
+    );
+  }
+
   updateRoute() {
     return this.router.get(
       '/:id',

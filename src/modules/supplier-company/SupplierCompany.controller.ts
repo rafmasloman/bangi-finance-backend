@@ -54,6 +54,26 @@ class SupplierCompanyController {
     }
   };
 
+  getDetailSupplierCompany = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { id } = req.params;
+    try {
+      const supplierCompany =
+        await this.supplierCompanyService.getSupplierCompanyDetail(id);
+
+      return sendSuccessResponse(
+        res,
+        supplierCompany,
+        'Supplier Company Detail fetched succesfully',
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateSupplierCompany = async (
     req: Request,
     res: Response,
