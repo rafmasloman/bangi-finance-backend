@@ -40,7 +40,7 @@ class ExpenseCategoryRoute {
 
   private deleteExpenseCatRoute() {
     return this.router.delete(
-      '/',
+      '/:id',
       this.expenseCatController.deleteExpenseCategory,
     );
   }
