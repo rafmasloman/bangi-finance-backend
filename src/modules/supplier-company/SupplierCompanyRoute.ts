@@ -55,6 +55,7 @@ class SupplierCompanyRoutes {
     this.getAllRoute();
     this.updateRoute();
     this.deleteRoute();
+    this.getDetailRoute();
 
     return this.router;
   }
