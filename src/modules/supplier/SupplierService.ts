@@ -12,6 +12,9 @@ class SupplierService {
       ppn,
       supplierCompanyId,
     } = params;
+
+    console.log('params : ', params);
+
     try {
       const supplier = await prisma.supplier.create({
         data: {
@@ -31,22 +34,24 @@ class SupplierService {
 
       return supplier;
     } catch (error) {
+      console.log('errors : ', error);
+
       throw error;
     }
   }
 
   async getAllSuppliers(page?: number, pageSize?: number) {
     try {
-      if (!page || !pageSize) {
-        page = 1;
-        pageSize = 10;
-      }
+      // if (!page || !pageSize) {
+      //   page = 1;
+      //   pageSize = 10;
+      // }
 
-      const skip = (page - 1) * pageSize;
+      // const skip = (page - 1) * pageSize;
 
       const supplier = await prisma.supplier.findMany({
-        skip,
-        take: pageSize,
+        // skip,
+        // take: pageSize,
       });
 
       const totalSupplier = await prisma.supplier.count();
