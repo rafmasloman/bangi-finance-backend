@@ -30,6 +30,14 @@ class SupplierService {
           ppn,
           totalAmount,
         },
+        include: {
+          supplierCompany: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       });
 
       return supplier;
@@ -52,6 +60,14 @@ class SupplierService {
       const supplier = await prisma.supplier.findMany({
         // skip,
         // take: pageSize,
+        include: {
+          supplierCompany: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       });
 
       const totalSupplier = await prisma.supplier.count();
@@ -67,6 +83,14 @@ class SupplierService {
       const supplier = await prisma.supplier.findFirst({
         where: {
           id,
+        },
+        include: {
+          supplierCompany: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       });
 
@@ -103,6 +127,14 @@ class SupplierService {
           price,
           quantity,
           ppn,
+        },
+        include: {
+          supplierCompany: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       });
 

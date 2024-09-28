@@ -35,7 +35,16 @@ class SupplierCompanyService {
 
   async getAllSuplierCompany() {
     try {
-      const companies = await prisma.supplierCompany.findMany();
+      const companies = await prisma.supplierCompany.findMany({
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              paymentStatus: true,
+            },
+          },
+        },
+      });
 
       return companies;
     } catch (error) {
@@ -48,6 +57,14 @@ class SupplierCompanyService {
       const company = await prisma.supplierCompany.delete({
         where: {
           id,
+        },
+        include: {
+          supplier: {
+            select: {
+              id: true,
+              paymentStatus: true,
+            },
+          },
         },
       });
 
