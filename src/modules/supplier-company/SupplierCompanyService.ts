@@ -37,7 +37,7 @@ class SupplierCompanyService {
     try {
       const companies = await prisma.supplierCompany.findMany({
         include: {
-          supplier: {
+          suppliers: {
             select: {
               id: true,
               paymentStatus: true,
@@ -59,7 +59,7 @@ class SupplierCompanyService {
           id,
         },
         include: {
-          supplier: {
+          suppliers: {
             select: {
               id: true,
               paymentStatus: true,
