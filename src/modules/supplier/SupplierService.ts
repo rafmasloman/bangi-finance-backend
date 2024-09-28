@@ -13,9 +13,8 @@ class SupplierService {
       supplierCompanyId,
     } = params;
 
-    console.log('params : ', params);
-
     try {
+      const totalAmount = quantity * price + ppn;
       const supplier = await prisma.supplier.create({
         data: {
           supplierCompany: {
@@ -29,6 +28,7 @@ class SupplierService {
           price,
           quantity,
           ppn,
+          totalAmount,
         },
       });
 

@@ -67,6 +67,7 @@ model Supplier {
   price Int
   discount Int
   ppn Int
+  totalAmount Int
   paymentStatus PaymentStatus
   supplierCompany SupplierCompany[]
   createdAt DateTime @default(now())

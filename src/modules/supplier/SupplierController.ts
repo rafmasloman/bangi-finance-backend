@@ -19,6 +19,8 @@ class SupplierController {
   }
 
   createSupplier = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('data : ', req.body);
+
     try {
       const {
         discount,
@@ -53,6 +55,8 @@ class SupplierController {
         201,
       );
     } catch (error) {
+      console.log('error : ', error);
+
       next(error);
     }
   };
