@@ -69,7 +69,9 @@ model Supplier {
   ppn Int
   totalAmount Int
   paymentStatus PaymentStatus
-  supplierCompany SupplierCompany[]
+  date DateTime @default(now())
+  supplierCompanyId Int
+  supplierCompany SupplierCompany @relation(references: [id], fields: [supplierCompanyId])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -77,9 +79,8 @@ model Supplier {
 model SupplierCompany {
   id Int @id @default(autoincrement())
   name String
-  supplierId String?
-  supplier Supplier? @relation(references: [id], fields: [supplierId])
-  createdAt DateTime @default(now())
+  suppliers Supplier[]
+  createdAt DateTime @default(now())  
   updatedAt DateTime @updatedAt
 }
 
