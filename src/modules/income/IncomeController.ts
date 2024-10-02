@@ -31,6 +31,7 @@ class IncomeController {
         billDiscount,
         focItem,
         itemDiscount,
+        userId,
       }: CreateIncomeDTO = req.body;
 
       const income = await this.incomeService.createIncome({
@@ -41,6 +42,7 @@ class IncomeController {
         billDiscount,
         focItem,
         itemDiscount,
+        userId,
       });
 
       return sendSuccessResponse(res, income, READ_INCOMES_MESSAGE, 201);
@@ -83,6 +85,7 @@ class IncomeController {
         billDiscount,
         focItem,
         itemDiscount,
+        userId,
       }: CreateIncomeDTO = req.body;
 
       const income = await this.incomeService.updateIncome(id, {
@@ -93,6 +96,7 @@ class IncomeController {
         billDiscount,
         focItem,
         itemDiscount,
+        userId,
       });
 
       return sendSuccessResponse(res, income, READ_INCOMES_MESSAGE, 200);

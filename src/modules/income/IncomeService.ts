@@ -43,7 +43,11 @@ class IncomeService {
 
   async getAllIncomes(page?: number, pageSize?: number) {
     try {
-      const incomes = await prisma.income.findMany();
+      const incomes = await prisma.income.findMany({
+        orderBy: {
+          date: 'asc',
+        },
+      });
 
       return incomes;
     } catch (error) {
@@ -151,8 +155,13 @@ class IncomeService {
       const managementServiceAnalytics = totalServicesAnalytics * 0.4;
       const employeServiceAnalytics = totalServicesAnalytics * 0.6;
 
+      console.log(totalSalesAnalytics);
+
+      const average =
+        incomes.length <= 0 ? 0 : totalSalesAnalytics / incomes.length;
+
       return {
-        salesAnalystics: {
+        salesAnalytics: {
           total: totalSalesAnalytics,
         },
         servicesAnalytics: {
@@ -168,6 +177,7 @@ class IncomeService {
         ppnAnalytics: {
           total: ppnAnalytics,
         },
+        average,
       };
     } catch (error) {
       throw error;

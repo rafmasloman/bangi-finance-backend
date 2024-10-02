@@ -61,6 +61,7 @@ class IncomeRoute {
     this.updateIncome();
     this.deleteIncome();
     this.getTotalIncomeAnalytics();
+    this.getIncomeDetail();
 
     return this.router;
   }
