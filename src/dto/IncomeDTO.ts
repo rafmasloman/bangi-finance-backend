@@ -8,6 +8,7 @@ export interface CreateIncomeDTO {
   focItem?: number;
   focBill: number;
   service: number;
+  userId: string;
 }
 
 export interface UpdateIncomeDTO {
@@ -18,4 +19,5 @@ export interface UpdateIncomeDTO {
   focItem?: number;
   focBill?: number;
   service?: number;
+  userId?: string;
 }
