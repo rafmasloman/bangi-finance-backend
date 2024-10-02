@@ -30,6 +30,14 @@ class ExpenseCategoryRoute {
     );
   }
 
+  private getExpenseCatDetailRoute() {
+    return this.router.get(
+      '/:id',
+      // authMiddleware,
+      this.expenseCatController.getExpenseCategoryDetail,
+    );
+  }
+
   private updateExpenseCatRoute() {
     return this.router.put(
       '/:id',
@@ -48,6 +56,7 @@ class ExpenseCategoryRoute {
   registerRoute() {
     this.createExpenseCatRoute();
     this.getAllExpenseCatRoute();
+    this.getExpenseCatDetailRoute();
     this.updateExpenseCatRoute();
     this.deleteExpenseCatRoute();
 

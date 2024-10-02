@@ -52,6 +52,28 @@ class ExpenseCategoryController {
     }
   };
 
+  getExpenseCategoryDetail = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+      const expenseCategory = await this.expenseCat.getExpenseCategoryDetail(
+        id,
+      );
+
+      return sendSuccessResponse(
+        res,
+        expenseCategory,
+        'Expense Category Detail fetched successfully',
+        200,
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateExpenseCategory = async (
     req: Request,
     res: Response,

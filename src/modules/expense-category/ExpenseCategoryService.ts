@@ -23,7 +23,29 @@ class ExpenseCategoryService {
 
   async getAllExpenseCategory() {
     try {
-      const expenses = await prisma.expenseCategory.findMany();
+      const expenseCategory = await prisma.expenseCategory.findMany({
+        include: {
+          expense: {
+            select: {
+              createdAt: true,
+            },
+          },
+        },
+      });
+
+      return expenseCategory;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getExpenseCategoryDetail(id: string) {
+    try {
+      const expenses = await prisma.expenseCategory.findFirst({
+        where: {
+          id: Number(id),
+        },
+      });
 
       return expenses;
     } catch (error) {
