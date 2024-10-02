@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import AuthController from './AuthController';
+import { authMiddleware } from '../../middleware/auth.middleware';
 
 class AuthRoute {
   authController: AuthController;
@@ -12,13 +13,20 @@ class AuthRoute {
   }
 
   loginRoute() {
-    console.log('route login initialize');
-
     return this.route.post('/login', this.authController.login);
+  }
+
+  credentialRoute() {
+    return this.route.get(
+      '/credential',
+      authMiddleware,
+      this.authController.credential,
+    );
   }
 
   registerRoute() {
     this.loginRoute();
+    this.credentialRoute();
 
     return this.route;
   }

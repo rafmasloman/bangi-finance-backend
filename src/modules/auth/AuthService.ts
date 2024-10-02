@@ -65,6 +65,20 @@ class AuthService {
       throw error;
     }
   }
+
+  async userCredential(id: string) {
+    try {
+      const credential = await prisma.users.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      return credential;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default AuthService;
