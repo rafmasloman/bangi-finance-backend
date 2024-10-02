@@ -17,6 +17,12 @@ import { Router } from 'express';
 import SupplierCompanyRoutes from '../modules/supplier-company/SupplierCompanyRoute';
 import SupplierCompanyService from '../modules/supplier-company/SupplierCompanyService';
 import SupplierCompanyController from '../modules/supplier-company/SupplierCompany.controller';
+import ExpenseService from '../modules/expense/ExpenseService';
+import ExpenseController from '../modules/expense/ExpenseController';
+import ExpenseRoute from '../modules/expense/ExpenseRoute';
+import HistoryService from '../modules/history/HistoryService';
+import HistoryController from '../modules/history/HistoryController';
+import HistoryRoute from '../modules/history/HistoryRoute';
 
 const routes = Router();
 // Inisialisasi services dan controllers
@@ -25,7 +31,9 @@ const UserServices = new UserService();
 const SupplierServices = new SupplierService();
 const ExpenseCategoryServices = new ExpenseCategoryService();
 const IncomeServices = new IncomeService();
+const ExpenseServices = new ExpenseService();
 const SupplierCompaniesServices = new SupplierCompanyService();
+const HistoryServices = new HistoryService();
 
 const AuthControllers = new AuthController(AuthServices);
 const UserControllers = new UserController(UserServices);
@@ -33,10 +41,12 @@ const SupplierControllers = new SupplierController(SupplierServices);
 const ExpenseCategoryControllers = new ExpenseCategoryController(
   ExpenseCategoryServices,
 );
+const ExpenseControllers = new ExpenseController(ExpenseServices);
 const IncomeControllers = new IncomeController(IncomeServices);
 const SupplierCompaniesControllers = new SupplierCompanyController(
   SupplierCompaniesServices,
 );
+const HistoryControllers = new HistoryController(HistoryServices);
 
 // Route Definitions
 const AuthRoutes = new AuthRoute(AuthControllers);
@@ -44,18 +54,22 @@ const UserRoutes = new UserRoute(UserControllers);
 const ExpenseCategoryRoutes = new ExpenseCategoryRoute(
   ExpenseCategoryControllers,
 );
+const ExpenseRoutes = new ExpenseRoute(ExpenseControllers);
 const SupplierRoutes = new SupplierRoute(SupplierControllers);
 const IncomeRoutes = new IncomeRoute(IncomeControllers);
 const SupplierCompaniesRoutes = new SupplierCompanyRoutes(
   SupplierCompaniesControllers,
 );
+const HistoryRoutes = new HistoryRoute(HistoryControllers);
 
 // Daftarkan route di sini tanpa prefix
 routes.use('/auth', AuthRoutes.getRoute());
 routes.use('/user', UserRoutes.getRoute());
 routes.use('/expense-category', ExpenseCategoryRoutes.getRoutes());
+routes.use('/expense', ExpenseRoutes.registerRoute());
 routes.use('/supplier', SupplierRoutes.registerRoute());
 routes.use('/income', IncomeRoutes.registerRoute());
 routes.use('/supplier-category', SupplierCompaniesRoutes.registerRoute());
+routes.use('/history', HistoryRoutes.registerRoute());
 
 export default routes;
