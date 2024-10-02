@@ -22,3 +22,11 @@ export const READ_SUPLIER_TOTAL_EACH_DATA_MESSAGE =
 export const CREATE_SUPPLIER_MESSAGE = 'suppliers created succesfully';
 export const UPDATE_SUPPLIER_MESSAGE = 'suppliers updated succesfully';
 export const DELETE_SUPPLIER_MESSAGE = 'suppliers deleted succesfully';
+
+export const READ_SUPPLIER_PAYMENT_STATUS_AMOUNT =
+  'supplier payment status amount fetched succesfully';
+
+export const CREATE_HISTORY_RESPONSE_MESSAGE = 'history created succesfully';
+export const UPDATE_HISTORY_RESPONSE_MESSAGE = 'history updated succesfully';
+export const READ_HISTORIES_RESPONSE_MESSAGE = 'histories fetched succesfully';
+export const DELETE_HISTORY_RESPONSE_MESSAGE = 'histories fetched succesfully';
