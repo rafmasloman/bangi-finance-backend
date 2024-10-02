@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import ExpenseService from './ExpenseService';
 import { CreateExpenseDTO, UpdateExpenseDTO } from '../../dto/ExpenseDTO';
+import { sendSuccessResponse } from '../../helpers/response.helper';
 
 class ExpenseController {
   private expenseService: ExpenseService;
@@ -10,14 +11,25 @@ class ExpenseController {
   }
 
   createExpense = async (req: Request, res: Response, next: NextFunction) => {
-    const { evidence, expenseCategoryId, note, price }: CreateExpenseDTO =
-      req.body;
+    const {
+      evidence,
+      expenseCategoryId,
+      note,
+      price,
+      date,
+      userId,
+    }: CreateExpenseDTO = req.body;
+
+    console.log('body : ', req.body);
+
     try {
       const expense = await this.expenseService.createExpense({
         evidence,
         expenseCategoryId,
         note,
         price,
+        date,
+        userId,
       });
 
       return res.json({
@@ -30,8 +42,29 @@ class ExpenseController {
     }
   };
 
+  getExpenseAmountByCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const expenseAmount =
+        await this.expenseService.getExpenseAmountByCategory();
+
+      return sendSuccessResponse(
+        res,
+        expenseAmount,
+        'Expense Sales fetched successfully',
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getAllExpenses = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log('user : ', (req as any).user);
+
       const expenses = await this.expenseService.getAllExpenses();
 
       return res.json({
@@ -66,7 +99,8 @@ class ExpenseController {
 
   updateExpense = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const { evidence, expenseCategoryId, note, price }: UpdateExpenseDTO =
+
+    const { evidence, expenseCategoryId, note, price, date }: UpdateExpenseDTO =
       req.body;
     try {
       const expense = await this.expenseService.updateExpense(id, {
@@ -74,6 +108,7 @@ class ExpenseController {
         expenseCategoryId,
         note,
         price,
+        date,
       });
 
       return res.json({

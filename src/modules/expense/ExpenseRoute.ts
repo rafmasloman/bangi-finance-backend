@@ -28,6 +28,14 @@ class ExpenseRoute {
     );
   }
 
+  private getExpenseSales() {
+    return this.route.get(
+      '/category-amount',
+      authMiddleware,
+      this.expenseController.getExpenseAmountByCategory,
+    );
+  }
+
   private getExpenseDetail() {
     return this.route.get(
       '/:id',
@@ -36,7 +44,7 @@ class ExpenseRoute {
     );
   }
 
-  private updateExpenseDetail() {
+  private updateExpense() {
     return this.route.put(
       '/:id',
       authMiddleware,
@@ -55,8 +63,10 @@ class ExpenseRoute {
   registerRoute() {
     this.createExpenseRouter();
     this.getAllExpensesRouter();
+    this.getExpenseSales();
     this.getExpenseDetail();
     this.deleteExpense();
+    this.updateExpense();
 
     return this.route;
   }
