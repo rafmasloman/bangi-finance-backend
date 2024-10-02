@@ -22,21 +22,26 @@ model Users {
   phoneNumber String?
   username String
   password String
+  incomes Income[]
+  expenses Expense[]
+  suppliers Supplier[]
   role Role @default(EMPLOYEE)
 }
 
 model Income {
   id String @id @default(uuid())
   date DateTime
-  itemSales Int
-  itemDiscount Int?
-  billDiscount Int?
-  focItem Int?
-  focBill Int?
+  itemSales Int @default(0)
+  itemDiscount Int? @default(0)
+  billDiscount Int? @default(0)
+  focItem Int? @default(0)
+  focBill Int? @default(0)
   totalSales Int
   totalCollection Int
   ppn Int
-  service Int
+  service Int @default(0)
+  userId String?
+  user Users? @relation( fields: [userId],references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -44,10 +49,13 @@ model Income {
 model Expense {
   id String  @id @default(uuid())
   evidence String
-  price Int
+  price Int @default(0)
+  date DateTime @default(now())
   note String?
-  expenseCategoryId Int? @unique
+  expenseCategoryId Int? 
   expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id])
+  userId String?
+  user Users? @relation( fields: [userId],references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -64,14 +72,16 @@ model Supplier {
   id String @id @default(uuid())
   evidence String
   quantity Int
-  price Int
-  discount Int
-  ppn Int
+  price Int @default(0)
+  discount Int @default(0)
+  ppn Int @default(0)
   totalAmount Int
   paymentStatus PaymentStatus
   date DateTime @default(now())
-  supplierCompanyId Int
-  supplierCompany SupplierCompany @relation(references: [id], fields: [supplierCompanyId])
+  supplierCompanyId Int?
+  supplierCompany SupplierCompany? @relation(references: [id], fields: [supplierCompanyId])
+  userId String?
+  user Users? @relation( fields: [userId],references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -83,6 +93,20 @@ model SupplierCompany {
   createdAt DateTime @default(now())  
   updatedAt DateTime @updatedAt
 }
+
+model History {
+  id String @id @default(uuid())
+  date DateTime @default(now())
+  month String
+  remainingEmployeeService Int @default(0)
+  remainingManagementService Int @default(0)
+  remainingTax Int @default(0)
+  remainingSales Int @default(0)
+  remainingRawMaterials Int @default(0)
+  createdAt DateTime @default(now())  
+  updatedAt DateTime @updatedAt
+}
+
 
 enum PaymentStatus {
   PAID
