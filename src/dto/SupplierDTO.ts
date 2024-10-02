@@ -8,6 +8,8 @@ export interface CreateSupplierDTO {
   quantity: number;
   ppn: number;
   supplierCompanyId: number;
+  date: Date;
+  userId: string;
 }
 
 export interface UpdateSupplierDTO {
@@ -18,4 +20,6 @@ export interface UpdateSupplierDTO {
   quantity?: number;
   ppn?: number;
   supplierCompanyId?: number;
+  date?: Date;
+  userId?: string;
 }

@@ -8,6 +8,7 @@ import {
   DELETE_SUPPLIER_MESSAGE,
   READ_EXPENSES_MESSAGE,
   READ_SUPPLIER_DETAIL_MESSAGE,
+  READ_SUPPLIER_PAYMENT_STATUS_AMOUNT,
   UPDATE_SUPPLIER_MESSAGE,
 } from '../../contants/message_response';
 
@@ -30,6 +31,8 @@ class SupplierController {
         price,
         quantity,
         supplierCompanyId,
+        date,
+        userId,
       }: CreateSupplierDTO = req.body;
 
       const supplier = await this.supplierService.createSupplier({
@@ -40,6 +43,8 @@ class SupplierController {
         price,
         quantity,
         supplierCompanyId,
+        date,
+        userId,
       });
 
       const totalPrice = countSupplierTotalPrice(
@@ -92,6 +97,24 @@ class SupplierController {
     }
   };
 
+  getAmountSupplierPayment = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const supplierAmount = await this.supplierService.getPaymentStatusTotal();
+
+      return sendSuccessResponse(
+        res,
+        supplierAmount,
+        READ_SUPPLIER_PAYMENT_STATUS_AMOUNT,
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateSupplier = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
@@ -103,7 +126,9 @@ class SupplierController {
         ppn,
         price,
         quantity,
+        date,
         supplierCompanyId,
+        userId,
       }: UpdateSupplierDTO = req.body;
 
       const supplier = await this.supplierService.updateSupplier(id, {
@@ -113,7 +138,9 @@ class SupplierController {
         ppn,
         price,
         quantity,
+        date,
         supplierCompanyId,
+        userId,
       });
 
       const totalPrice = countSupplierTotalPrice(

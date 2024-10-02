@@ -11,6 +11,7 @@ class SupplierService {
       quantity,
       ppn,
       supplierCompanyId,
+      date,
     } = params;
 
     try {
@@ -29,6 +30,7 @@ class SupplierService {
           quantity,
           ppn,
           totalAmount,
+          date,
         },
         include: {
           supplierCompany: {
@@ -100,6 +102,44 @@ class SupplierService {
     }
   }
 
+  async getPaymentStatusTotal() {
+    try {
+      const totalPaymentByStatus = await prisma.supplier.groupBy({
+        by: ['paymentStatus'],
+        where: {
+          paymentStatus: {
+            in: ['PAID', 'UNPAID'],
+          },
+        },
+        _sum: {
+          price: true,
+        },
+      });
+
+      // const totalPaid = await prisma.supplier.findMany({
+      //   where: {
+      //     paymentStatus: 'PAID',
+      //   },
+      // });
+
+      // const countTotalPaid = totalPaymentByStatus.reduce(
+      //   (acc, item) => (!item._sum.price ? 0 : acc + item._sum.price),
+      //   0,
+      // );
+
+      const totalPaid = totalPaymentByStatus.find(
+        (status) => status.paymentStatus === 'PAID',
+      );
+
+      return {
+        paymentStatusAmount: totalPaymentByStatus,
+        totalPaid: totalPaid?._sum.price,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async updateSupplier(id: string, params: UpdateSupplierDTO) {
     const {
       discount,
@@ -109,6 +149,7 @@ class SupplierService {
       quantity,
       ppn,
       supplierCompanyId,
+      date,
     } = params;
     try {
       const supplier = await prisma.supplier.update({
@@ -127,6 +168,7 @@ class SupplierService {
           price,
           quantity,
           ppn,
+          date,
         },
         include: {
           supplierCompany: {
