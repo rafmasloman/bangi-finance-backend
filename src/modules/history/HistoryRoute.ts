@@ -27,11 +27,59 @@ class HistoryRoute {
     );
   }
 
+  getDetailHistoryRoute() {
+    return this.router.get(
+      '/:id',
+      authMiddleware,
+      this.historyController.getDetailHistory,
+    );
+  }
+
+  getExpenseServiceMasterDataStats() {
+    return this.router.get(
+      '/masters-expense/stats',
+      authMiddleware,
+      this.historyController.getHistoryExpenseMasterDataStats,
+    );
+  }
+
+  getHistoryServiceDataStats() {
+    return this.router.get(
+      '/:id/stats',
+      authMiddleware,
+      this.historyController.getHistoryRemainingData,
+    );
+  }
+
+  getHistoriesUser() {
+    return this.router.get(
+      '/users/master',
+      authMiddleware,
+      this.historyController.getAllHistoryByUser,
+    );
+  }
+
+  getMDRHistory() {
+    return this.router.get(
+      '/:id/mdr',
+      authMiddleware,
+      this.historyController.getMDRHistory,
+    );
+  }
+
   updateHistory() {
     return this.router.put(
       '/:id',
       authMiddleware,
       this.historyController.updateHistory,
+    );
+  }
+
+  updateMDR() {
+    return this.router.put(
+      '/:id/mdr',
+      authMiddleware,
+      this.historyController.updateMDR,
     );
   }
 
@@ -46,7 +94,13 @@ class HistoryRoute {
   registerRoute() {
     this.createHistoryRoute();
     this.getAllHistorysRoute();
+    this.getHistoriesUser();
+    this.getDetailHistoryRoute();
+    this.getExpenseServiceMasterDataStats();
+    this.getHistoryServiceDataStats();
+    this.getMDRHistory();
     this.updateHistory();
+    this.updateMDR();
     this.deleteHistory();
 
     return this.router;

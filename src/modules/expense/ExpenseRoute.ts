@@ -30,7 +30,7 @@ class ExpenseRoute {
 
   private getExpenseSales() {
     return this.route.get(
-      '/category-amount',
+      '/:id/category-amount',
       authMiddleware,
       this.expenseController.getExpenseAmountByCategory,
     );

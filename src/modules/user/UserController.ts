@@ -1,21 +1,21 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserDTO } from '../../dto/UserDTO';
 import UserService from './UserService';
+import { CreateUserDTO } from '../../dto/UserDTO';
+import { sendSuccessResponse } from '../../helpers/response.helper';
+import { BaseRequestType } from '../../middleware/auth.middleware';
 
 class UserController {
   private userService: UserService;
 
   constructor(userService: UserService) {
     this.userService = userService;
-    this.createUser = this.createUser.bind(this);
-    this.getAllUsers = this.getAllUsers.bind(this);
   }
 
-  async createUser(req: Request, res: Response, next: NextFunction) {
-    const userDTO = plainToInstance(CreateUserDTO, req.body);
-    const error = await validate(userDTO);
+  createUser = async (req: Request, res: Response, next: NextFunction) => {
+    // const userDTO = plainToInstance(CreateUserDTO, req.body);
+    // const error = await validate(userDTO);
 
     // const {
     //   email,
@@ -27,9 +27,9 @@ class UserController {
     //   phoneNumber,
     // } = req.body;
 
-    if (error.length > 0) {
-      next(error);
-    }
+    // if (error.length > 0) {
+    //   next(error);
+    // }
 
     const {
       email,
@@ -39,7 +39,7 @@ class UserController {
       firstname,
       lastname,
       phoneNumber,
-    } = userDTO;
+    }: CreateUserDTO = req.body;
     try {
       const user = this.userService.createUser({
         email,
@@ -57,13 +57,31 @@ class UserController {
         data: user,
       });
     } catch (error) {
-      throw error;
+      next(error);
     }
-  }
+  };
 
-  async getAllUsers(req: Request, res: Response, next: NextFunction) {
+  getAllUsers = async (
+    req: BaseRequestType,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
-      const users = await this.userService.getAllUsers();
+      const userId = req.user?.id;
+
+      if (!userId) {
+        throw new Error('User Not Found');
+      }
+
+      const { page, pageSize } = req.query as {
+        page?: string;
+        pageSize?: string;
+      };
+
+      const users = await this.userService.getAllUsers(
+        Number(page),
+        Number(pageSize),
+      );
 
       return res.json({
         statusCode: 200,
@@ -73,9 +91,37 @@ class UserController {
     } catch (error) {
       console.log('error : ', error);
 
-      throw error;
+      next(error);
     }
-  }
+  };
+
+  getDetailUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      const user = await this.userService.getDetailUser(id);
+
+      return sendSuccessResponse(
+        res,
+        user,
+        'Detail user fetched succesfully',
+        200,
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const user = await this.userService.deleteUser(id);
+
+      return sendSuccessResponse(res, null, 'User deleted successfully', 200);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default UserController;

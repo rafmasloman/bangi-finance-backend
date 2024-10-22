@@ -28,13 +28,23 @@ class SupplierRoute {
   }
 
   getDetailSupplierRoute() {
-    return this.route.get('/:id', this.supplierController.getDetailSupplier);
+    return this.route.get(
+      '/:id/detail',
+      this.supplierController.getDetailSupplier,
+    );
   }
 
   getAmountSupplierPayment() {
     return this.route.get(
-      '/payment',
+      '/total-payment',
       this.supplierController.getAmountSupplierPayment,
+    );
+  }
+
+  getPaymentTotalSupplier() {
+    return this.route.get(
+      '/stats/:id/total-payment',
+      this.supplierController.getPaymentTotalBySupplier,
     );
   }
 
@@ -43,6 +53,14 @@ class SupplierRoute {
       '/:id',
       authMiddleware,
       this.supplierController.updateSupplier,
+    );
+  }
+
+  updateSupplierPaymentStatusRoute() {
+    return this.route.put(
+      '/:id/payment-status',
+      authMiddleware,
+      this.supplierController.updateSupplierPaymentStatus,
     );
   }
 
@@ -58,7 +76,10 @@ class SupplierRoute {
     this.createSupplierRoute();
     this.getDetailSupplierRoute();
     this.getAllSupplierRoute();
+    this.getAmountSupplierPayment();
+    this.getPaymentTotalSupplier();
     this.updateSupplierRoute();
+    this.updateSupplierPaymentStatusRoute();
     this.deleteSupplierRoute();
 
     return this.route;

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import ExpenseService from './ExpenseService';
 import { CreateExpenseDTO, UpdateExpenseDTO } from '../../dto/ExpenseDTO';
 import { sendSuccessResponse } from '../../helpers/response.helper';
+import { BaseRequestType } from '../../middleware/auth.middleware';
 
 class ExpenseController {
   private expenseService: ExpenseService;
@@ -18,9 +19,8 @@ class ExpenseController {
       price,
       date,
       userId,
+      historyId,
     }: CreateExpenseDTO = req.body;
-
-    console.log('body : ', req.body);
 
     try {
       const expense = await this.expenseService.createExpense({
@@ -30,6 +30,7 @@ class ExpenseController {
         price,
         date,
         userId,
+        historyId,
       });
 
       return res.json({
@@ -48,24 +49,48 @@ class ExpenseController {
     next: NextFunction,
   ) => {
     try {
+      const { id } = req.params;
+      const { categoryName } = req.query;
       const expenseAmount =
-        await this.expenseService.getExpenseAmountByCategory();
+        await this.expenseService.getExpenseAmountByCategory(
+          String(categoryName).split(','),
+          id,
+        );
 
       return sendSuccessResponse(
         res,
         expenseAmount,
-        'Expense Sales fetched successfully',
+        'Expense Total by Category fetched successfully',
       );
     } catch (error) {
       next(error);
     }
   };
 
-  getAllExpenses = async (req: Request, res: Response, next: NextFunction) => {
+  getAllExpenses = async (
+    req: BaseRequestType,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
-      console.log('user : ', (req as any).user);
+      const userId = req.user?.id;
 
-      const expenses = await this.expenseService.getAllExpenses();
+      if (!userId) {
+        throw new Error('User Not Found');
+      }
+
+      const { historyId, page, pageSize } = req.query as {
+        historyId: string;
+        page?: string;
+        pageSize?: string;
+      };
+
+      const expenses = await this.expenseService.getAllExpenses(
+        historyId,
+        userId,
+        Number(page),
+        Number(pageSize),
+      );
 
       return res.json({
         statusCode: 200,
@@ -100,8 +125,15 @@ class ExpenseController {
   updateExpense = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    const { evidence, expenseCategoryId, note, price, date }: UpdateExpenseDTO =
-      req.body;
+    const {
+      evidence,
+      expenseCategoryId,
+      note,
+      price,
+      date,
+      historyId,
+      userId,
+    }: UpdateExpenseDTO = req.body;
     try {
       const expense = await this.expenseService.updateExpense(id, {
         evidence,
@@ -109,6 +141,8 @@ class ExpenseController {
         note,
         price,
         date,
+        historyId,
+        userId,
       });
 
       return res.json({

@@ -1,4 +1,5 @@
 import { CreateIncomeDTO, UpdateIncomeDTO } from '../../dto/IncomeDTO';
+import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
 
 class IncomeService {
@@ -12,6 +13,8 @@ class IncomeService {
         focItem = 0,
         itemDiscount = 0,
         date,
+        historyId,
+        userId,
       } = payload;
 
       const totalSales =
@@ -32,6 +35,16 @@ class IncomeService {
           totalSales,
           ppn,
           totalCollection,
+          histories: {
+            connect: {
+              id: historyId,
+            },
+          },
+          user: {
+            connect: {
+              id: userId
+            }
+          }
         },
       });
 
@@ -41,15 +54,32 @@ class IncomeService {
     }
   }
 
-  async getAllIncomes(page?: number, pageSize?: number) {
+  async getAllIncomes(
+    historyId: string,
+    userId: string,
+    page?: number,
+    pageSize?: number,
+  ) {
     try {
+      const totalRecords = await prisma.income.count();
+
+      const pagination = paginationHelper(page, pageSize, totalRecords);
+
       const incomes = await prisma.income.findMany({
+        where: {
+          historyId,
+        },
         orderBy: {
           date: 'asc',
         },
+        skip: pagination.skip,
+        take: pagination.take,
       });
 
-      return incomes;
+      return {
+        incomes,
+        totalPage: pagination.totalPage,
+      };
     } catch (error) {
       throw error;
     }
@@ -65,6 +95,8 @@ class IncomeService {
         focItem = 0,
         itemDiscount = 0,
         date,
+        historyId,
+        userId,
       } = payload;
 
       const totalSales =
@@ -88,6 +120,16 @@ class IncomeService {
           totalSales,
           ppn,
           totalCollection,
+          histories: {
+            connect: {
+              id: historyId,
+            },
+          },
+          user: {
+            connect: {
+              id: userId
+            }
+          }
         },
       });
 
@@ -116,6 +158,13 @@ class IncomeService {
       const income = await prisma.income.findFirst({
         where: {
           id,
+        },
+        include: {
+          histories: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
 
@@ -154,8 +203,6 @@ class IncomeService {
 
       const managementServiceAnalytics = totalServicesAnalytics * 0.4;
       const employeServiceAnalytics = totalServicesAnalytics * 0.6;
-
-      console.log(totalSalesAnalytics);
 
       const average =
         incomes.length <= 0 ? 0 : totalSalesAnalytics / incomes.length;

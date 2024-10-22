@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `history` ADD COLUMN `mdr` DOUBLE NOT NULL DEFAULT 0;

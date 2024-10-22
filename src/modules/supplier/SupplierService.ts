@@ -1,4 +1,5 @@
 import { CreateSupplierDTO, UpdateSupplierDTO } from '../../dto/SupplierDTO';
+import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
 
 class SupplierService {
@@ -12,6 +13,8 @@ class SupplierService {
       ppn,
       supplierCompanyId,
       date,
+      historyId,
+      userId,
     } = params;
 
     try {
@@ -23,6 +26,17 @@ class SupplierService {
               id: supplierCompanyId,
             },
           },
+          histories: {
+            connect: {
+              id: historyId,
+            },
+          },
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+
           discount,
           evidence,
           paymentStatus,
@@ -50,18 +64,21 @@ class SupplierService {
     }
   }
 
-  async getAllSuppliers(page?: number, pageSize?: number) {
+  async getAllSuppliers(
+    historyId: string,
+    userId: string,
+    page?: number,
+    pageSize?: number,
+  ) {
     try {
-      // if (!page || !pageSize) {
-      //   page = 1;
-      //   pageSize = 10;
-      // }
+      const totalSupplier = await prisma.supplier.count();
 
-      // const skip = (page - 1) * pageSize;
+      const pagination = paginationHelper(page, pageSize, totalSupplier);
 
       const supplier = await prisma.supplier.findMany({
-        // skip,
-        // take: pageSize,
+        where: {
+          historyId,
+        },
         include: {
           supplierCompany: {
             select: {
@@ -70,11 +87,11 @@ class SupplierService {
             },
           },
         },
+        skip: pagination.skip,
+        take: pagination.take,
       });
 
-      const totalSupplier = await prisma.supplier.count();
-
-      return { supplier, totalSupplier };
+      return { supplier, totalPage: pagination.totalPage };
     } catch (error) {
       throw error;
     }
@@ -112,7 +129,10 @@ class SupplierService {
           },
         },
         _sum: {
-          price: true,
+          totalAmount: true,
+        },
+        _count: {
+          _all: true,
         },
       });
 
@@ -127,14 +147,51 @@ class SupplierService {
       //   0,
       // );
 
+      console.log('total payment : ', totalPaymentByStatus);
+
       const totalPaid = totalPaymentByStatus.find(
         (status) => status.paymentStatus === 'PAID',
+      );
+      const totalUnpaid = totalPaymentByStatus.find(
+        (status) => status.paymentStatus === 'UNPAID',
       );
 
       return {
         paymentStatusAmount: totalPaymentByStatus,
-        totalPaid: totalPaid?._sum.price,
+        totalPaid: totalPaid?._sum.totalAmount,
+        totalUnpaid: totalUnpaid?._sum.totalAmount,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getPaymentTotalBySupplier(
+    historyId: string,
+    paymentStatus: 'PAID' | 'UNPAID',
+  ) {
+    try {
+      const supplierCompany = await prisma.supplierCompany.findMany({
+        distinct: ['name'],
+        where: {
+          suppliers: {
+            every: {
+              paymentStatus,
+            },
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          suppliers: {
+            select: {
+              totalAmount: true,
+            },
+          },
+        },
+      });
+
+      return supplierCompany;
     } catch (error) {
       throw error;
     }
@@ -150,6 +207,8 @@ class SupplierService {
       ppn,
       supplierCompanyId,
       date,
+      historyId,
+      userId,
     } = params;
     try {
       const supplier = await prisma.supplier.update({
@@ -160,6 +219,16 @@ class SupplierService {
           supplierCompany: {
             connect: {
               id: supplierCompanyId,
+            },
+          },
+          histories: {
+            connect: {
+              id: historyId,
+            },
+          },
+          user: {
+            connect: {
+              id: userId,
             },
           },
           discount,
@@ -177,6 +246,27 @@ class SupplierService {
               name: true,
             },
           },
+        },
+      });
+
+      return supplier;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateSupplierStatus(id: string, paymentStatus: 'PAID' | 'UNPAID') {
+    try {
+      const supplier = await prisma.supplier.update({
+        where: {
+          id,
+        },
+        data: {
+          paymentStatus,
+        },
+        select: {
+          id: true,
+          paymentStatus: true,
         },
       });
 

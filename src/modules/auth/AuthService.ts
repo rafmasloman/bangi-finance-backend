@@ -1,3 +1,4 @@
+import { error } from 'console';
 import { LoginDTO, RegisterDTO } from '../../dto/AuthDTO';
 import prisma from '../../libs/prisma/orm.libs';
 import {
@@ -42,12 +43,16 @@ class AuthService {
         },
       });
 
-      if (!user) {
-        throw new Error();
-      }
+      console.log('login user : ', user);
+
+      // if (!user) {
+      //   console.log('error');
+
+      //   throw new Error();
+      // }
 
       const compareData = await generateComparePassword(
-        user?.password,
+        user?.password ?? '',
         password,
       );
       console.log(compareData);
@@ -56,7 +61,10 @@ class AuthService {
         throw new Error();
       }
 
-      const token = generateToken({ id: user.id, role: user.role });
+      const token = generateToken({
+        id: user?.id ?? '',
+        role: user?.role ?? '',
+      });
 
       return { token };
     } catch (error) {
@@ -74,7 +82,30 @@ class AuthService {
         },
       });
 
+      if (!credential) {
+        throw error;
+      }
+
       return credential;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async changePassword(userId: string, newPassword: string) {
+    try {
+      const hashedNewPassword = await generateHashPassword(newPassword);
+
+      const user = await prisma.users.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          password: hashedNewPassword,
+        },
+      });
+
+      return user;
     } catch (error) {
       throw error;
     }

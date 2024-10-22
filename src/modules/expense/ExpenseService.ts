@@ -1,12 +1,29 @@
 import { CreateExpenseDTO, UpdateExpenseDTO } from '../../dto/ExpenseDTO';
+import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
 import expenseUtils from '../../utils/ExpenseUtils';
 
 class ExpenseService {
   async createExpense(payload: CreateExpenseDTO) {
-    const { evidence, expenseCategoryId, note, price, date, userId } = payload;
+    const {
+      evidence,
+      expenseCategoryId,
+      note,
+      price,
+      date,
+      userId,
+      historyId,
+    } = payload;
 
     try {
+      const findExpense = await prisma.expenseCategory.findUnique({
+        where: {
+          id: expenseCategoryId,
+        },
+      });
+
+      console.log('find expense : ', findExpense);
+
       const expense = prisma.expense.create({
         data: {
           evidence,
@@ -14,6 +31,7 @@ class ExpenseService {
           date,
           expenseCategoryId,
           note,
+          historyId,
           userId,
         },
       });
@@ -24,11 +42,23 @@ class ExpenseService {
     }
   }
 
-  async getAllExpenses() {
+  async getAllExpenses(
+    historyId: string,
+    userId: string,
+    page?: number,
+    pageSize?: number,
+  ) {
     try {
+      const totalRecords = await prisma.expense.count();
+
+      const pagination = paginationHelper(page, pageSize, totalRecords);
+
       const expense = await prisma.expense.findMany({
         orderBy: {
           date: 'asc',
+        },
+        where: {
+          historyId,
         },
         include: {
           expenseCategory: {
@@ -37,31 +67,82 @@ class ExpenseService {
               name: true,
             },
           },
+          histories: {
+            select: {
+              title: true,
+            },
+          },
         },
+        skip: pagination.skip,
+        take: pagination.take,
       });
 
-      return expense;
+      return { expense, totalPage: pagination.totalPage };
     } catch (error) {
       throw error;
     }
   }
 
-  async getExpenseAmountByCategory() {
+  async getExpenseAmountByCategory(category: string[], historyId: string) {
     try {
-      const expenseSales = await expenseUtils.calculateTotalByCategory('Sales');
-      const serviceEmployee = await expenseUtils.calculateTotalByCategory(
-        'Service Karyawan',
+      const totalCategories = await prisma.expense.groupBy({
+        by: ['expenseCategoryId'],
+        where: {
+          expenseCategory: {
+            name: {
+              in: category,
+            },
+          },
+          histories: {
+            id: historyId,
+          },
+        },
+        _sum: {
+          price: true,
+        },
+      });
+
+      const categoriesWithNames = await Promise.all(
+        totalCategories.map(async (item: any) => {
+          const categoryName = await prisma.expenseCategory.findUnique({
+            where: { id: item.expenseCategoryId },
+            select: { name: true },
+          });
+
+          return {
+            ...item,
+
+            expenseCategoryName: categoryName?.name,
+          };
+        }),
       );
 
-      console.log('service');
-
-      return {
-        expenseSales,
-        serviceEmployee,
-      };
+      return categoriesWithNames;
     } catch (error) {
       throw error;
     }
+  }
+
+  async getExpenseHistoryStats(historyId: string, expenseCategoryName: string) {
+    try {
+      const expense = await prisma.expense.findMany({
+        where: {
+          historyId,
+          expenseCategory: {
+            name: expenseCategoryName,
+          },
+        },
+        select: {
+          price: true,
+        },
+      });
+
+      const managementServiceHistory = await prisma.history.findFirst({
+        where: {
+          id: historyId,
+        },
+      });
+    } catch (error) {}
   }
 
   async getExpenseDetail(id: string) {
@@ -88,7 +169,15 @@ class ExpenseService {
 
   async updateExpense(id: string, payload: UpdateExpenseDTO) {
     try {
-      const { evidence, expenseCategoryId, note, price, date } = payload;
+      const {
+        evidence,
+        expenseCategoryId,
+        note,
+        price,
+        date,
+        historyId,
+        userId,
+      } = payload;
       const expense = await prisma.expense.update({
         where: {
           id,
@@ -99,6 +188,8 @@ class ExpenseService {
           price,
           expenseCategoryId,
           note,
+          userId,
+          historyId,
         },
       });
 

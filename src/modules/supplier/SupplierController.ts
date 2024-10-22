@@ -9,8 +9,10 @@ import {
   READ_EXPENSES_MESSAGE,
   READ_SUPPLIER_DETAIL_MESSAGE,
   READ_SUPPLIER_PAYMENT_STATUS_AMOUNT,
+  READ_SUPPLIERS_MESSAGE,
   UPDATE_SUPPLIER_MESSAGE,
 } from '../../contants/message_response';
+import { BaseRequestType } from '../../middleware/auth.middleware';
 
 class SupplierController {
   private supplierService: SupplierService;
@@ -20,8 +22,6 @@ class SupplierController {
   }
 
   createSupplier = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('data : ', req.body);
-
     try {
       const {
         discount,
@@ -33,6 +33,7 @@ class SupplierController {
         supplierCompanyId,
         date,
         userId,
+        historyId,
       }: CreateSupplierDTO = req.body;
 
       const supplier = await this.supplierService.createSupplier({
@@ -45,6 +46,7 @@ class SupplierController {
         supplierCompanyId,
         date,
         userId,
+        historyId,
       });
 
       const totalPrice = countSupplierTotalPrice(
@@ -66,16 +68,28 @@ class SupplierController {
     }
   };
 
-  getAllSuppliers = async (req: Request, res: Response, next: NextFunction) => {
+  getAllSuppliers = async (
+    req: BaseRequestType,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
-      const { page, pageSize } = req.query;
+      const { page, pageSize, historyId } = req.query;
+
+      const userId = req.user?.id;
+
+      if (!userId) {
+        throw new Error('User Not Found');
+      }
 
       const suppliers = await this.supplierService.getAllSuppliers(
+        String(historyId),
+        userId,
         Number(page),
         Number(pageSize),
       );
 
-      return sendSuccessResponse(res, suppliers, READ_EXPENSES_MESSAGE);
+      return sendSuccessResponse(res, suppliers, READ_SUPPLIERS_MESSAGE);
     } catch (error) {
       next(error);
     }
@@ -115,6 +129,31 @@ class SupplierController {
     }
   };
 
+  getPaymentTotalBySupplier = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { historyId } = req.params;
+      const { paymentStatus } = req.query;
+
+      const supplierPayments =
+        await this.supplierService.getPaymentTotalBySupplier(
+          historyId,
+          paymentStatus as 'PAID' | 'UNPAID',
+        );
+
+      return sendSuccessResponse(
+        res,
+        supplierPayments,
+        READ_SUPPLIER_PAYMENT_STATUS_AMOUNT,
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateSupplier = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
@@ -129,6 +168,7 @@ class SupplierController {
         date,
         supplierCompanyId,
         userId,
+        historyId,
       }: UpdateSupplierDTO = req.body;
 
       const supplier = await this.supplierService.updateSupplier(id, {
@@ -141,6 +181,7 @@ class SupplierController {
         date,
         supplierCompanyId,
         userId,
+        historyId,
       });
 
       const totalPrice = countSupplierTotalPrice(
@@ -153,8 +194,34 @@ class SupplierController {
         res,
         { supplier, totalPrice },
         UPDATE_SUPPLIER_MESSAGE,
+        201,
       );
     } catch (error) {
+      next(error);
+    }
+  };
+
+  updateSupplierPaymentStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+      const { paymentStatus } = req.query;
+      const supplier = await this.supplierService.updateSupplierStatus(
+        id,
+        paymentStatus as 'PAID' | 'UNPAID',
+      );
+
+      return sendSuccessResponse(
+        res,
+        supplier,
+        'Supplier Payment Status updated successfully',
+      );
+    } catch (error) {
+      console.log('error : ', error);
+
       next(error);
     }
   };

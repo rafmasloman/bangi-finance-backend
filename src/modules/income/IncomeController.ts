@@ -6,6 +6,7 @@ import {
   DELETE_INCOMES_MESSAGE,
   READ_INCOMES_MESSAGE,
 } from '../../contants/message_response';
+import { BaseRequestType } from '../../middleware/auth.middleware';
 
 class IncomeController {
   private incomeService: IncomeService;
@@ -32,6 +33,7 @@ class IncomeController {
         focItem,
         itemDiscount,
         userId,
+        historyId,
       }: CreateIncomeDTO = req.body;
 
       const income = await this.incomeService.createIncome({
@@ -43,6 +45,7 @@ class IncomeController {
         focItem,
         itemDiscount,
         userId,
+        historyId,
       });
 
       return sendSuccessResponse(res, income, READ_INCOMES_MESSAGE, 201);
@@ -53,9 +56,31 @@ class IncomeController {
     }
   };
 
-  getAllIncome = async (req: Request, res: Response, next: NextFunction) => {
+  getAllIncome = async (
+    req: BaseRequestType,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
-      const incomes = await this.incomeService.getAllIncomes();
+      const userId = req.user?.id;
+
+      if (!userId) {
+        throw new Error('User not found');
+      }
+
+      const { historyId, page, pageSize } = req.query as {
+        historyId: string;
+        page?: string;
+        pageSize?: string;
+      };
+      console.log('page : ', page);
+
+      const incomes = await this.incomeService.getAllIncomes(
+        historyId,
+        userId,
+        Number(page),
+        Number(pageSize),
+      );
 
       return sendSuccessResponse(res, incomes, READ_INCOMES_MESSAGE, 200);
     } catch (error) {
@@ -86,6 +111,7 @@ class IncomeController {
         focItem,
         itemDiscount,
         userId,
+        historyId,
       }: CreateIncomeDTO = req.body;
 
       const income = await this.incomeService.updateIncome(id, {
@@ -97,6 +123,7 @@ class IncomeController {
         focItem,
         itemDiscount,
         userId,
+        historyId,
       });
 
       return sendSuccessResponse(res, income, READ_INCOMES_MESSAGE, 200);
