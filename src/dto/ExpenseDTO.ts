@@ -5,6 +5,7 @@ export class CreateExpenseDTO {
   userId: string;
   note: string;
   date: Date;
+  historyId: string;
 }
 
 export class UpdateExpenseDTO {
@@ -13,6 +14,8 @@ export class UpdateExpenseDTO {
   expenseCategoryId?: number;
   note?: string;
   date?: Date;
+  userId?: string;
+  historyId?: string;
 }
 
 export class CreateExpenseCategoryDTO {

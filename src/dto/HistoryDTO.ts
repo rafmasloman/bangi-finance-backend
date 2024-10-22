@@ -6,6 +6,8 @@ export interface CreateHistoryDTO {
   remainingSales: number;
   remainingRawMaterials: number;
   month: string;
+  year: string;
+  userId?: string;
 }
 
 export interface UpdateHistoryDTO {
@@ -16,4 +18,6 @@ export interface UpdateHistoryDTO {
   remainingSales?: number;
   remainingRawMaterials?: number;
   month?: string;
+  year?: string;
+  userId?: string;
 }

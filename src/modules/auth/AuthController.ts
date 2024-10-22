@@ -15,10 +15,10 @@ class AuthController {
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password }: LoginDTO = req.body;
+
       const user = await this.authService.login({ email, password });
 
       (req as any).user = user;
-      res.cookie('token', user);
 
       return res.json({
         statusCode: 201,
@@ -52,6 +52,28 @@ class AuthController {
       next(error);
     }
   }
+
+  changeUserPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+      const { newPassword } = req.body;
+
+      const user = await this.authService.changePassword(id, newPassword);
+
+      return sendSuccessResponse(
+        res,
+        user,
+        'Password change succesfully updated',
+        201,
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

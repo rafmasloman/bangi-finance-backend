@@ -1,7 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export interface BaseRequestType extends Request {
+  user?: {
+    id: string;
+  };
+}
+const authMiddleware = (
+  req: BaseRequestType,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 
@@ -13,6 +22,9 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const decoded = jwt.verify(token!, process.env.JWT_SECRET_KEY as string);
 
     (req as any).user = decoded;
+
+    console.log('tes : ', (req as any).user);
+
     req.signedCookies = decoded as any;
 
     next();

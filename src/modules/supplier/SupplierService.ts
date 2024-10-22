@@ -173,13 +173,13 @@ class SupplierService {
     try {
       const supplierCompany = await prisma.supplierCompany.findMany({
         distinct: ['name'],
-        where: {
-          suppliers: {
-            every: {
-              paymentStatus,
-            },
-          },
-        },
+        // where: {
+        //   suppliers: {
+        //     every: {
+        //       paymentStatus,
+        //     },
+        //   },
+        // },
         select: {
           id: true,
           name: true,
