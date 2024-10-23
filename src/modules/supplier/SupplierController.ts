@@ -117,7 +117,11 @@ class SupplierController {
     next: NextFunction,
   ) => {
     try {
-      const supplierAmount = await this.supplierService.getPaymentStatusTotal();
+      const { historyId } = req.params;
+
+      const supplierAmount = await this.supplierService.getPaymentStatusTotal(
+        historyId,
+      );
 
       return sendSuccessResponse(
         res,

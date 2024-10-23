@@ -2,6 +2,9 @@ export const READ_INCOMES_MESSAGE = 'Incomes fetched succesfully';
 export const READ_INCOME_DETAIL_MESSAGE = 'Income detail fetched succesfully';
 export const READ_INCOME_TOTAL_EACH_DATA_MESSAGE =
   'Incomes total each fetched succesfully';
+export const READ_INCOMES_SUMMARY_MESSAGE =
+  'Incomes summaries fetched succesfully';
+
 export const CREATE_INCOMES_MESSAGE = 'Incomes created succesfully';
 export const UPDATE_INCOMES_MESSAGE = 'Incomes updated succesfully';
 export const DELETE_INCOMES_MESSAGE = 'Incomes deleted succesfully';

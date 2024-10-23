@@ -55,6 +55,13 @@ class IncomeRoute {
     return this.router.get('/:id', this.incomeController.getIncomeDetail);
   }
 
+  getIncomeSummary() {
+    return this.router.get(
+      '/:id/summary',
+      this.incomeController.getIncomeSummaryData,
+    );
+  }
+
   registerRoute() {
     this.createIncomeRoute();
     this.getAllIncomesRoute();
@@ -62,6 +69,7 @@ class IncomeRoute {
     this.deleteIncome();
     this.getTotalIncomeAnalytics();
     this.getIncomeDetail();
+    this.getIncomeSummary();
 
     return this.router;
   }

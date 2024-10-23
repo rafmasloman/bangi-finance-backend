@@ -5,6 +5,7 @@ import { sendSuccessResponse } from '../../helpers/response.helper';
 import {
   DELETE_INCOMES_MESSAGE,
   READ_INCOMES_MESSAGE,
+  READ_INCOMES_SUMMARY_MESSAGE,
 } from '../../contants/message_response';
 import { BaseRequestType } from '../../middleware/auth.middleware';
 
@@ -94,6 +95,26 @@ class IncomeController {
       const incomes = await this.incomeService.getIncomeDetail(id);
 
       return sendSuccessResponse(res, incomes, READ_INCOMES_MESSAGE, 200);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getIncomeSummaryData = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+      const incomeSummary = await this.incomeService.getIncomeSummaryData(id);
+
+      return sendSuccessResponse(
+        res,
+        incomeSummary,
+        READ_INCOMES_SUMMARY_MESSAGE,
+        200,
+      );
     } catch (error) {
       next(error);
     }

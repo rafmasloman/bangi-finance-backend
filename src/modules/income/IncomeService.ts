@@ -42,9 +42,9 @@ class IncomeService {
           },
           user: {
             connect: {
-              id: userId
-            }
-          }
+              id: userId,
+            },
+          },
         },
       });
 
@@ -127,9 +127,9 @@ class IncomeService {
           },
           user: {
             connect: {
-              id: userId
-            }
-          }
+              id: userId,
+            },
+          },
         },
       });
 
@@ -225,6 +225,69 @@ class IncomeService {
           total: ppnAnalytics,
         },
         average,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getIncomeSummaryData(historyId?: string) {
+    try {
+      const totalBillDiscount = await prisma.income.aggregate({
+        where: {
+          historyId,
+        },
+        _sum: {
+          billDiscount: true,
+        },
+      });
+
+      const totalItemDiscount = await prisma.income.aggregate({
+        where: {
+          historyId,
+        },
+        _sum: {
+          itemDiscount: true,
+        },
+      });
+
+      const totalItemSales = await prisma.income.aggregate({
+        where: {
+          historyId,
+        },
+        _sum: {
+          totalSales: true,
+        },
+      });
+
+      const focBill = await prisma.income.aggregate({
+        where: {
+          historyId,
+        },
+        _sum: {
+          focBill: true,
+        },
+      });
+
+      const totalDiscount =
+        (totalBillDiscount._sum.billDiscount ?? 0) +
+        (totalItemDiscount._sum.itemDiscount ?? 0);
+      const totalSales =
+        (totalItemSales._sum.totalSales ?? 0) -
+        totalDiscount -
+        (focBill._sum.focBill ?? 0);
+
+      const discByFoc =
+        ((totalDiscount + (focBill._sum.focBill ?? 0)) /
+          (totalItemSales._sum.totalSales ?? 0)) *
+        100;
+
+      return {
+        itemSales: totalItemSales._sum.totalSales,
+        totalDiscount,
+        totalFoc: focBill._sum.focBill,
+        totalSales,
+        discByFoc: Math.round(discByFoc),
       };
     } catch (error) {
       throw error;

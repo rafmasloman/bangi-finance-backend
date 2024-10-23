@@ -119,13 +119,16 @@ class SupplierService {
     }
   }
 
-  async getPaymentStatusTotal() {
+  async getPaymentStatusTotal(historyId?: string) {
     try {
       const totalPaymentByStatus = await prisma.supplier.groupBy({
         by: ['paymentStatus'],
         where: {
           paymentStatus: {
             in: ['PAID', 'UNPAID'],
+          },
+          histories: {
+            id: historyId,
           },
         },
         _sum: {

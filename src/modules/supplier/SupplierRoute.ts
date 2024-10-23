@@ -36,7 +36,7 @@ class SupplierRoute {
 
   getAmountSupplierPayment() {
     return this.route.get(
-      '/total-payment',
+      '/:historyId/total-payment',
       this.supplierController.getAmountSupplierPayment,
     );
   }

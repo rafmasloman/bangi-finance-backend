@@ -31,7 +31,7 @@ const UserServices = new UserService();
 const SupplierServices = new SupplierService();
 const ExpenseCategoryServices = new ExpenseCategoryService();
 const IncomeServices = new IncomeService();
-const ExpenseServices = new ExpenseService();
+const ExpenseServices = new ExpenseService(SupplierServices);
 const SupplierCompaniesServices = new SupplierCompanyService();
 const HistoryServices = new HistoryService();
 

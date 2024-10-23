@@ -2,8 +2,14 @@ import { CreateExpenseDTO, UpdateExpenseDTO } from '../../dto/ExpenseDTO';
 import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
 import expenseUtils from '../../utils/ExpenseUtils';
+import SupplierService from '../supplier/SupplierService';
 
 class ExpenseService {
+  supplierService: SupplierService;
+  constructor(supplierService: SupplierService) {
+    this.supplierService = supplierService;
+  }
+
   async createExpense(payload: CreateExpenseDTO) {
     const {
       evidence,
@@ -102,7 +108,19 @@ class ExpenseService {
         },
       });
 
-      const categoriesWithNames = await Promise.all(
+      const totalExpenseByCategory = totalCategories.reduce(
+        (acc, category) => acc + (category._sum.price ?? 0),
+        0,
+      );
+
+      const totalPaidService = await this.supplierService.getPaymentStatusTotal(
+        historyId,
+      );
+
+      const totalExpense =
+        totalExpenseByCategory + (totalPaidService.totalPaid ?? 0);
+
+      const expense = await Promise.all(
         totalCategories.map(async (item: any) => {
           const categoryName = await prisma.expenseCategory.findUnique({
             where: { id: item.expenseCategoryId },
@@ -111,13 +129,12 @@ class ExpenseService {
 
           return {
             ...item,
-
             expenseCategoryName: categoryName?.name,
           };
         }),
       );
 
-      return categoriesWithNames;
+      return { expense, totalExpense };
     } catch (error) {
       throw error;
     }
