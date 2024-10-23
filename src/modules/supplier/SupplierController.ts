@@ -135,12 +135,12 @@ class SupplierController {
     next: NextFunction,
   ) => {
     try {
-      const { historyId } = req.params;
+      const { id } = req.params;
       const { paymentStatus } = req.query;
 
       const supplierPayments =
         await this.supplierService.getPaymentTotalBySupplier(
-          historyId,
+          id,
           paymentStatus as 'PAID' | 'UNPAID',
         );
 
