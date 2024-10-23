@@ -187,6 +187,16 @@ class SupplierService {
         },
       });
 
+      const totalPayment = await prisma.supplier.aggregate({
+        where: {
+          historyId,
+          paymentStatus,
+        },
+        _sum: {
+          totalAmount: true,
+        },
+      });
+
       const results = suppliers.reduce((acc: any, supplier: any) => {
         const companyId = supplier.supplierCompany.id;
 
@@ -194,7 +204,7 @@ class SupplierService {
         if (!acc[companyId]) {
           acc[companyId] = {
             id: supplier.supplierCompany.id,
-            nama: supplier.supplierCompany.name,
+            name: supplier.supplierCompany.name,
             totalAmount: 0,
           };
         }
@@ -205,11 +215,14 @@ class SupplierService {
         return acc;
       }, []);
 
-      const finalResult = Object.values(results).filter(
+      const payment = Object.values(results).filter(
         (item: any) => item.totalAmount > 0,
       );
 
-      return finalResult;
+      return {
+        payment,
+        totalPayment: totalPayment._sum.totalAmount,
+      };
     } catch (error) {
       throw error;
     }
