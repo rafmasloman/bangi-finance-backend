@@ -171,27 +171,45 @@ class SupplierService {
     paymentStatus: 'PAID' | 'UNPAID',
   ) {
     try {
-      const supplierCompany = await prisma.supplierCompany.findMany({
-        distinct: ['name'],
-        // where: {
-        //   suppliers: {
-        //     every: {
-        //       paymentStatus,
-        //     },
-        //   },
-        // },
+      const suppliers = await prisma.supplier.findMany({
+        where: {
+          historyId,
+          paymentStatus: paymentStatus,
+        },
         select: {
-          id: true,
-          name: true,
-          suppliers: {
+          supplierCompany: {
             select: {
-              totalAmount: true,
+              id: true,
+              name: true,
             },
           },
+          totalAmount: true,
         },
       });
 
-      return supplierCompany;
+      const results = suppliers.reduce((acc: any, supplier: any) => {
+        const companyId = supplier.supplierCompany.id;
+
+        // Jika supplierCompany belum ada di akumulator, buat entry baru
+        if (!acc[companyId]) {
+          acc[companyId] = {
+            id: supplier.supplierCompany.id,
+            nama: supplier.supplierCompany.name,
+            totalAmount: 0,
+          };
+        }
+
+        // Tambahkan totalAmount ke supplierCompany yang relevan
+        acc[companyId].totalAmount += supplier.totalAmount;
+
+        return acc;
+      }, []);
+
+      const finalResult = Object.values(results).filter(
+        (item: any) => item.totalAmount > 0,
+      );
+
+      return finalResult;
     } catch (error) {
       throw error;
     }
