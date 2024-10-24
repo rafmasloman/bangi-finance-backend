@@ -173,7 +173,7 @@ class SupplierController {
         supplierCompanyId,
         userId,
         historyId,
-      }: UpdateSupplierDTO = req.body;
+      }: CreateSupplierDTO = req.body;
 
       const supplier = await this.supplierService.updateSupplier(id, {
         discount,

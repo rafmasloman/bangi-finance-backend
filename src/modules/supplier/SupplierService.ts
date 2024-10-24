@@ -231,7 +231,7 @@ class SupplierService {
     }
   }
 
-  async updateSupplier(id: string, params: UpdateSupplierDTO) {
+  async updateSupplier(id: string, params: CreateSupplierDTO) {
     const {
       discount,
       evidence,
@@ -245,6 +245,8 @@ class SupplierService {
       userId,
     } = params;
     try {
+      const totalAmount = quantity * price + ppn;
+
       const supplier = await prisma.supplier.update({
         where: {
           id,
@@ -272,6 +274,7 @@ class SupplierService {
           quantity,
           ppn,
           date,
+          totalAmount,
         },
         include: {
           supplierCompany: {
