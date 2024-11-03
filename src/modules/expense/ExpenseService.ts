@@ -2,7 +2,6 @@ import { ExpenseCategories } from '@prisma/client';
 import { CreateExpenseDTO, UpdateExpenseDTO } from '../../dto/ExpenseDTO';
 import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
-import expenseUtils from '../../utils/ExpenseUtils';
 import SupplierService from '../supplier/SupplierService';
 
 class ExpenseService {
