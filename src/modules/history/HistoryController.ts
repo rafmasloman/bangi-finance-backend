@@ -10,6 +10,7 @@ import {
   UPDATE_HISTORY_RESPONSE_MESSAGE,
 } from '../../contants/message_response';
 import { BaseRequestType } from '../../middleware/auth.middleware';
+import { ExpenseCategories } from '@prisma/client';
 
 class HistoryController {
   private historyService: HistoryService;
@@ -99,7 +100,7 @@ class HistoryController {
     try {
       const { historyId, name } = req.query as {
         historyId: string;
-        name: string;
+        name: ExpenseCategories;
       };
 
       const historyExpenseStats =
@@ -130,10 +131,7 @@ class HistoryController {
       };
 
       const historyExpenseStats =
-        await this.historyService.getHistoryRemainingData(
-          historyId,
-          categoryName,
-        );
+        await this.historyService.getHistoryRemainingData(historyId);
 
       return sendSuccessResponse(
         res,
@@ -192,7 +190,7 @@ class HistoryController {
         remainingEmployeeService,
         remainingManagementService,
         remainingRawMaterials,
-        remainingSales,
+        remainingSales = 0,
         remainingTax,
       }: UpdateHistoryDTO = req.body;
       const history = await this.historyService.updateHistory(id, {

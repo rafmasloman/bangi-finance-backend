@@ -14,7 +14,7 @@ class ExpenseController {
   createExpense = async (req: Request, res: Response, next: NextFunction) => {
     const {
       evidence,
-      expenseCategoryId,
+      expenseCategory,
       note,
       price,
       date,
@@ -25,7 +25,7 @@ class ExpenseController {
     try {
       const expense = await this.expenseService.createExpense({
         evidence,
-        expenseCategoryId,
+        expenseCategory,
         note,
         price,
         date,
@@ -50,12 +50,8 @@ class ExpenseController {
   ) => {
     try {
       const { id } = req.params;
-      const { categoryName } = req.query;
       const expenseAmount =
-        await this.expenseService.getExpenseAmountByCategory(
-          String(categoryName).split(','),
-          id,
-        );
+        await this.expenseService.getExpenseAmountByCategory(id);
 
       return sendSuccessResponse(
         res,
@@ -92,6 +88,8 @@ class ExpenseController {
         Number(pageSize),
       );
 
+      console.log('expenses : ', expenses);
+
       return res.json({
         statusCode: 200,
         message: 'Success Get All Expenses Data',
@@ -122,12 +120,50 @@ class ExpenseController {
     }
   };
 
+  getExpenseSummary = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+
+      const expenseSummary = await this.expenseService.getExpenseSummary(id);
+
+      return sendSuccessResponse(
+        res,
+        expenseSummary,
+        'Expense Summary fetched successfully',
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getExpenseCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const expenseCategory = await this.expenseService.getExpenseCategory();
+
+      return sendSuccessResponse(
+        res,
+        expenseCategory,
+        'Expense Category fetch succesfully',
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateExpense = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
     const {
       evidence,
-      expenseCategoryId,
+      expenseCategory,
       note,
       price,
       date,
@@ -137,7 +173,7 @@ class ExpenseController {
     try {
       const expense = await this.expenseService.updateExpense(id, {
         evidence,
-        expenseCategoryId,
+        expenseCategory,
         note,
         price,
         date,

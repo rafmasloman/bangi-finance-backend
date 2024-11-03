@@ -1,3 +1,4 @@
+import { ExpenseCategories } from '@prisma/client';
 import { CreateExpenseDTO, UpdateExpenseDTO } from '../../dto/ExpenseDTO';
 import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
@@ -11,34 +12,30 @@ class ExpenseService {
   }
 
   async createExpense(payload: CreateExpenseDTO) {
-    const {
-      evidence,
-      expenseCategoryId,
-      note,
-      price,
-      date,
-      userId,
-      historyId,
-    } = payload;
+    const { evidence, expenseCategory, note, price, date, userId, historyId } =
+      payload;
+
+    console.log('expense data : ', payload);
 
     try {
-      const findExpense = await prisma.expenseCategory.findUnique({
-        where: {
-          id: expenseCategoryId,
-        },
-      });
-
-      console.log('find expense : ', findExpense);
-
       const expense = prisma.expense.create({
         data: {
           evidence,
+          note,
           price,
           date,
-          expenseCategoryId,
-          note,
-          historyId,
-          userId,
+          expenseCategory,
+
+          histories: {
+            connect: {
+              id: historyId,
+            },
+          },
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
         },
       });
 
@@ -59,23 +56,34 @@ class ExpenseService {
 
       const pagination = paginationHelper(page, pageSize, totalRecords);
 
+      const user = await prisma.users.findFirst({
+        where: {
+          id: userId,
+        },
+        select: {
+          role: true,
+        },
+      });
+
       const expense = await prisma.expense.findMany({
         orderBy: {
           date: 'asc',
         },
         where: {
           historyId,
+          userId: user?.role === 'DIRECTOR' ? undefined : userId,
         },
         include: {
-          expenseCategory: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
           histories: {
             select: {
               title: true,
+            },
+          },
+          user: {
+            select: {
+              firstname: true,
+              lastname: true,
+              role: true,
             },
           },
         },
@@ -89,15 +97,31 @@ class ExpenseService {
     }
   }
 
-  async getExpenseAmountByCategory(category: string[], historyId: string) {
+  async getExpenseCategory() {
+    try {
+      const expenseCategories = Object.values(ExpenseCategories);
+
+      return expenseCategories;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getExpenseAmountByCategory(historyId: string) {
     try {
       const totalCategories = await prisma.expense.groupBy({
-        by: ['expenseCategoryId'],
+        by: ['expenseCategory'],
         where: {
           expenseCategory: {
-            name: {
-              in: category,
-            },
+            in: [
+              'GAJI_KARYAWAN',
+              'OPERASIONAL',
+              'PENGEMBALIAN_MODAL',
+              'PPN',
+              'SALES',
+              'SERVICE_KARYAWAN',
+              'SERVICE_MANAJEMEN',
+            ],
           },
           histories: {
             id: historyId,
@@ -120,34 +144,28 @@ class ExpenseService {
       const totalExpense =
         totalExpenseByCategory + (totalPaidService.totalPaid ?? 0);
 
-      const expense = await Promise.all(
-        totalCategories.map(async (item: any) => {
-          const categoryName = await prisma.expenseCategory.findUnique({
-            where: { id: item.expenseCategoryId },
-            select: { name: true },
-          });
+      const response = totalCategories.map((expense) => {
+        return {
+          category: expense.expenseCategory,
+          amount: expense._sum.price,
+        };
+      });
 
-          return {
-            ...item,
-            expenseCategoryName: categoryName?.name,
-          };
-        }),
-      );
-
-      return { expense, totalExpense };
+      return { expense: response, totalExpense };
     } catch (error) {
       throw error;
     }
   }
 
-  async getExpenseHistoryStats(historyId: string, expenseCategoryName: string) {
+  async getExpenseHistoryStats(
+    historyId: string,
+    expenseCategoryName: ExpenseCategories,
+  ) {
     try {
       const expense = await prisma.expense.findMany({
         where: {
           historyId,
-          expenseCategory: {
-            name: expenseCategoryName,
-          },
+          expenseCategory: expenseCategoryName,
         },
         select: {
           price: true,
@@ -168,14 +186,6 @@ class ExpenseService {
         where: {
           id,
         },
-        include: {
-          expenseCategory: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
       });
 
       return expense;
@@ -184,34 +194,88 @@ class ExpenseService {
     }
   }
 
+  async getExpenseSummary(id?: string) {
+    try {
+      const ppnExpense = await prisma.expense.aggregate({
+        where: {
+          expenseCategory: 'PPN',
+        },
+
+        _sum: {
+          price: true,
+        },
+      });
+
+      const managementExpense = await prisma.expense.aggregate({
+        where: {
+          expenseCategory: 'SERVICE_MANAJEMEN',
+        },
+
+        _sum: {
+          price: true,
+        },
+      });
+
+      const salesExpense = await prisma.expense.aggregate({
+        where: {
+          expenseCategory: 'SALES',
+        },
+
+        _sum: {
+          price: true,
+        },
+      });
+
+      const totalPaidService = await this.supplierService.getPaymentStatusTotal(
+        id,
+      );
+
+      const rawMaterials =
+        (salesExpense._sum.price ?? 0) + (totalPaidService.totalPaid ?? 0);
+      const operational = ppnExpense._sum.price ?? 0;
+      const payrollEmployee = managementExpense._sum.price ?? 0;
+
+      const totalExpense =
+        rawMaterials + (operational ?? 0) + (payrollEmployee ?? 0);
+
+      return {
+        rawMaterials,
+        operational,
+        payrollEmployee,
+        totalExpense,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async updateExpense(id: string, payload: UpdateExpenseDTO) {
     try {
-      const {
-        evidence,
-        expenseCategoryId,
-        note,
-        price,
-        date,
-        historyId,
-        userId,
-      } = payload;
+      const { evidence, expenseCategory, note, price, date, historyId } =
+        payload;
+
       const expense = await prisma.expense.update({
         where: {
           id,
         },
         data: {
           evidence,
-          date,
-          price,
-          expenseCategoryId,
           note,
-          userId,
-          historyId,
+          price,
+          date,
+          expenseCategory,
+          histories: {
+            connect: {
+              id: historyId,
+            },
+          },
         },
       });
 
       return expense;
     } catch (error) {
+      console.log('error : ', error);
+
       throw error;
     }
   }

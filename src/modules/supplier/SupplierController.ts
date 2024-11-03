@@ -212,11 +212,15 @@ class SupplierController {
   ) => {
     try {
       const { id } = req.params;
-      const { paymentStatus } = req.query;
+      const { supplierId, paymentStatus } = req.body;
+      console.log('body : ', req.body);
+
       const supplier = await this.supplierService.updateSupplierStatus(
-        id,
+        supplierId,
         paymentStatus as 'PAID' | 'UNPAID',
       );
+
+      console.log('supplier');
 
       return sendSuccessResponse(
         res,

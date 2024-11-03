@@ -17,7 +17,7 @@ class UserRoute {
     return this.router.get(
       '/',
       authMiddleware,
-      checkAccess,
+      // checkAccess,
       this.userController.getAllUsers,
     );
   }

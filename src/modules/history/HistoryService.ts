@@ -1,3 +1,4 @@
+import { ExpenseCategories } from '@prisma/client';
 import { CreateHistoryDTO, UpdateHistoryDTO } from '../../dto/HistoryDTO';
 import prisma from '../../libs/prisma/orm.libs';
 import ExpenseService from '../expense/ExpenseService';
@@ -14,6 +15,7 @@ class HistoryService {
           remainingManagementService: payload.remainingManagementService,
           remainingRawMaterials: payload.remainingRawMaterials,
           remainingTax: payload.remainingTax,
+          remainingSales: 0,
           date: payload.date,
           year: payload.year,
           user: {
@@ -81,15 +83,13 @@ class HistoryService {
 
   async getHistoryExpenseMasterDataStats(
     historyId: string,
-    expenseName: string,
+    expenseName: ExpenseCategories,
   ) {
     try {
       const expenseServiceStats = await prisma.expense.findMany({
         where: {
           historyId,
-          expenseCategory: {
-            name: expenseName,
-          },
+          expenseCategory: expenseName,
         },
         select: {
           price: true,
@@ -113,7 +113,10 @@ class HistoryService {
     }
   }
 
-  async getHistoryServiceRemainingData(historyId: string, name: string) {
+  async getHistoryServiceRemainingData(
+    historyId: string,
+    name: ExpenseCategories,
+  ) {
     try {
       const remainingService = await this.getHistoryExpenseMasterDataStats(
         historyId,
@@ -177,7 +180,7 @@ class HistoryService {
     }
   }
 
-  async getHistoryRemainingData(historyId: string, categoryName: string) {
+  async getHistoryRemainingData(historyId: string) {
     try {
       const income = await prisma.income.aggregate({
         where: {
@@ -191,11 +194,18 @@ class HistoryService {
         },
       });
 
+      const totalSalesExpense = await prisma.expense.aggregate({
+        where: {
+          expenseCategory: 'SALES',
+        },
+        _sum: {
+          price: true,
+        },
+      });
+
       const totalTaxExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: {
-            name: 'PPN',
-          },
+          expenseCategory: 'PPN',
         },
         _sum: {
           price: true,
@@ -204,9 +214,7 @@ class HistoryService {
 
       const totalManagementServiceExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: {
-            name: 'SERVICE MANAJEMEN',
-          },
+          expenseCategory: 'SERVICE_MANAJEMEN',
         },
         _sum: {
           price: true,
@@ -215,9 +223,7 @@ class HistoryService {
 
       const totalEmployeeServiceExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: {
-            name: 'SERVICE KARYAWAN',
-          },
+          expenseCategory: 'SERVICE_KARYAWAN',
         },
         _sum: {
           price: true,
@@ -271,15 +277,31 @@ class HistoryService {
         serviceEmployeExpenseSum +
         history.remainingManagementService;
 
+      let remainingSales =
+        (income._sum.totalSales ?? 0) -
+        (totalSalesExpense._sum.price ?? 0) -
+        serviceEmployeExpenseSum -
+        serviceManagementExpenseSum -
+        taxExpenseSum;
+
+      const balance =
+        remainingSales +
+        remainingMontEmployeeService +
+        remainingMonthManagementService +
+        remainingMonthTax;
+
       return {
         remainingMontEmployeeService,
         remainingMonthManagementService,
         remainingMonthTax,
+        remainingSales,
+        balance: Math.round(balance),
       };
     } catch (error) {
       throw error;
     }
   }
+
   async getHistoryStatsAnalytics(expenseService: ExpenseService) {
     // const expense = await expenseService.getExpenseAmountByCategory();
     const history = await prisma.history.findFirst({

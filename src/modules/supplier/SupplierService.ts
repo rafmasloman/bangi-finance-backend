@@ -150,8 +150,6 @@ class SupplierService {
       //   0,
       // );
 
-      console.log('total payment : ', totalPaymentByStatus);
-
       const totalPaid = totalPaymentByStatus.find(
         (status) => status.paymentStatus === 'PAID',
       );
@@ -161,8 +159,8 @@ class SupplierService {
 
       return {
         paymentStatusAmount: totalPaymentByStatus,
-        totalPaid: totalPaid?._sum.totalAmount,
-        totalUnpaid: totalUnpaid?._sum.totalAmount,
+        totalPaid: totalPaid?._sum.totalAmount ?? 0,
+        totalUnpaid: totalUnpaid?._sum.totalAmount ?? 0,
       };
     } catch (error) {
       throw error;
@@ -292,23 +290,23 @@ class SupplierService {
     }
   }
 
-  async updateSupplierStatus(id: string, paymentStatus: 'PAID' | 'UNPAID') {
+  async updateSupplierStatus(id: string[], paymentStatus: 'PAID' | 'UNPAID') {
     try {
-      const supplier = await prisma.supplier.update({
+      const supplier = await prisma.supplier.updateMany({
         where: {
-          id,
+          id: {
+            in: id,
+          },
         },
         data: {
           paymentStatus,
-        },
-        select: {
-          id: true,
-          paymentStatus: true,
         },
       });
 
       return supplier;
     } catch (error) {
+      console.log('error : ', error);
+
       throw error;
     }
   }

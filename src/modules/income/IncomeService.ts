@@ -1,8 +1,15 @@
 import { CreateIncomeDTO, UpdateIncomeDTO } from '../../dto/IncomeDTO';
 import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
+import ExpenseService from '../expense/ExpenseService';
 
 class IncomeService {
+  expenseService: ExpenseService;
+
+  constructor(expenseService: ExpenseService) {
+    this.expenseService = expenseService;
+  }
+
   async createIncome(payload: CreateIncomeDTO) {
     try {
       let {
@@ -123,11 +130,6 @@ class IncomeService {
           histories: {
             connect: {
               id: historyId,
-            },
-          },
-          user: {
-            connect: {
-              id: userId,
             },
           },
         },
@@ -288,6 +290,46 @@ class IncomeService {
         totalFoc: focBill._sum.focBill,
         totalSales,
         discByFoc: Math.round(discByFoc),
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getIncomeProfitSummary(historyId?: string) {
+    try {
+      const salesTotal = await this.getIncomeSummaryData(historyId);
+
+      const expenseTotal = await this.expenseService.getExpenseSummary(
+        historyId,
+      );
+
+      expenseTotal.rawMaterials;
+
+      const profit = salesTotal.totalSales - expenseTotal.totalExpense;
+      const profitPercent = (profit / (salesTotal.itemSales ?? 0)) * 100;
+
+      const foodCost =
+        (expenseTotal.rawMaterials / (salesTotal.itemSales ?? 0)) * 100;
+      const operational =
+        (expenseTotal.operational / (salesTotal.itemSales ?? 0)) * 100;
+      const employeePayroll =
+        (expenseTotal.payrollEmployee / (salesTotal.itemSales ?? 0)) * 100;
+
+      const discFoc =
+        ((salesTotal.totalDiscount + (salesTotal.totalFoc ?? 0)) /
+          (salesTotal.itemSales ?? 0)) *
+        100;
+
+      return {
+        profit: {
+          amount: profit,
+          percent: Math.round(profitPercent),
+        },
+        foodCost: Math.floor(foodCost),
+        operational: Math.floor(operational),
+        employeePayroll: Math.floor(employeePayroll),
+        discFoc: Math.floor(discFoc),
       };
     } catch (error) {
       throw error;

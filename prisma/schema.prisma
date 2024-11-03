@@ -56,8 +56,9 @@ model Expense {
   date DateTime @default(now())
   note String?
   // categoryName String
-  expenseCategoryId Int? 
-  expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id])
+  expenseCategory ExpenseCategories
+  // expenseCategoryId Int? 
+  // expenseCategory ExpenseCategory? @relation(fields: [expenseCategoryId], references: [id])
   userId String?
   user Users? @relation( fields: [userId],references: [id])
   historyId String?
@@ -66,13 +67,13 @@ model Expense {
   updatedAt DateTime @updatedAt
 }
 
-model ExpenseCategory {
-  id Int @id @default(autoincrement())
-  name String
-  expense Expense[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+// model ExpenseCategory {
+//   id Int @id @default(autoincrement())
+//   name String
+//   // expense Expense[]
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 
 model Supplier {
   id String @id @default(uuid())
@@ -112,6 +113,7 @@ model History {
   remainingManagementService Int @default(0)
   remainingTax Int @default(0)
   remainingRawMaterials Int @default(0)
+  remainingSales Int @default(0)
   mdr Float @default(0)
   incomes Income[]
   expenses Expense[]
@@ -131,4 +133,14 @@ enum PaymentStatus {
 enum Role {
   EMPLOYEE
   DIRECTOR
+}
+
+enum ExpenseCategories {
+  SALES
+  SERVICE_KARYAWAN
+  SERVICE_MANAJEMEN
+  PPN 
+  GAJI_KARYAWAN
+  PENGEMBALIAN_MODAL
+  OPERASIONAL
 }

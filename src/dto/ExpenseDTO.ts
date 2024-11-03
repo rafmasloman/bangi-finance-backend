@@ -1,7 +1,9 @@
+import { ExpenseCategories } from '@prisma/client';
+
 export class CreateExpenseDTO {
   evidence: string;
   price: number;
-  expenseCategoryId: number;
+  expenseCategory: ExpenseCategories;
   userId: string;
   note: string;
   date: Date;
@@ -11,7 +13,7 @@ export class CreateExpenseDTO {
 export class UpdateExpenseDTO {
   evidence?: string;
   price?: number;
-  expenseCategoryId?: number;
+  expenseCategory: ExpenseCategories;
   note?: string;
   date?: Date;
   userId?: string;

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import HistoryController from './HistoryController';
+import { checkAccess } from '../../middleware/role.middleware';
 
 class HistoryRoute {
   private historyController: HistoryController;

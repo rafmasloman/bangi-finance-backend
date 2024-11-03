@@ -38,16 +38,9 @@ class UserService {
 
   async getAllUsers(page?: number, pageSize?: number) {
     try {
-      const totalRecords = await prisma.users.count();
+      const users = await prisma.users.findMany();
 
-      const pagination = paginationHelper(page, pageSize, totalRecords);
-
-      const users = await prisma.users.findMany({
-        skip: pagination.skip,
-        take: pagination.take,
-      });
-
-      return { users, totalPage: pagination.totalPage };
+      return users;
     } catch (error) {
       throw error;
     }
