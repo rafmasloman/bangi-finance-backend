@@ -192,6 +192,7 @@ class IncomeController {
   ) => {
     try {
       const { id } = req.params;
+
       const incomes = await this.incomeService.getIncomesDataAnalytics(id);
 
       return sendSuccessResponse(res, incomes, READ_INCOMES_MESSAGE, 200);

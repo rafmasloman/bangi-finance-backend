@@ -180,9 +180,13 @@ class IncomeService {
     try {
       const incomes = await prisma.income.findMany({
         where: {
-          id: historyId,
+          histories: {
+            id: historyId,
+          },
         },
       });
+
+      console.log('incomes : ', historyId);
 
       const collectTotalSales = incomes.map((tSales) => tSales.totalSales);
       const collectServices = incomes.map((service) => service.service);
@@ -230,7 +234,7 @@ class IncomeService {
         ppnAnalytics: {
           total: ppnAnalytics,
         },
-        average,
+        average: Math.floor(average),
       };
     } catch (error) {
       throw error;
