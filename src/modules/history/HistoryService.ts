@@ -305,12 +305,12 @@ class HistoryService {
       let remainingMonthManagementService =
         (income._sum.service ?? 0) * 0.4 -
         serviceManagementExpenseSum +
-        history.remainingEmployeeService;
+        history.remainingManagementService;
 
       let remainingMontEmployeeService =
         (income._sum.service ?? 0) * 0.6 -
         serviceEmployeeExpenseSum +
-        history.remainingManagementService;
+        history.remainingEmployeeService;
 
       let remainingSales =
         (income._sum.totalSales ?? 0) -
@@ -326,8 +326,12 @@ class HistoryService {
         remainingMonthTax;
 
       return {
-        remainingMontEmployeeService,
-        remainingMonthManagementService,
+        remainingMontEmployeeService: Math.ceil(
+          remainingMontEmployeeService,
+        ).toFixed(3),
+        remainingMonthManagementService: Math.ceil(
+          remainingMonthManagementService,
+        ).toFixed(3),
         remainingMonthTax,
         remainingSales,
         balance: Math.round(balance),
