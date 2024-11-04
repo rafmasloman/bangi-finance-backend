@@ -242,8 +242,6 @@ class HistoryService {
         },
       });
 
-      console.log('history : ', historyId);
-
       if (!history) {
         throw new Error('History Not Found');
       }
@@ -291,14 +289,6 @@ class HistoryService {
         remainingMontEmployeeService +
         remainingMonthManagementService +
         remainingMonthTax;
-
-      console.log('response : ', {
-        remainingMontEmployeeService,
-        remainingMonthManagementService,
-        remainingMonthTax,
-        remainingSales,
-        balance: Math.round(balance),
-      });
 
       return {
         remainingMontEmployeeService,

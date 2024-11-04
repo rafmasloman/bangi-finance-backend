@@ -23,8 +23,6 @@ const authMiddleware = (
 
     (req as any).user = decoded;
 
-    console.log('tes : ', (req as any).user);
-
     req.signedCookies = decoded as any;
 
     next();
