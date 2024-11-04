@@ -176,9 +176,13 @@ class IncomeService {
     }
   }
 
-  async getIncomesDataAnalytics() {
+  async getIncomesDataAnalytics(historyId: string) {
     try {
-      const incomes = await prisma.income.findMany();
+      const incomes = await prisma.income.findMany({
+        where: {
+          id: historyId,
+        },
+      });
 
       const collectTotalSales = incomes.map((tSales) => tSales.totalSales);
       const collectServices = incomes.map((service) => service.service);

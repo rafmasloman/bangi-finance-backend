@@ -191,7 +191,8 @@ class IncomeController {
     next: NextFunction,
   ) => {
     try {
-      const incomes = await this.incomeService.getIncomesDataAnalytics();
+      const { id } = req.params;
+      const incomes = await this.incomeService.getIncomesDataAnalytics(id);
 
       return sendSuccessResponse(res, incomes, READ_INCOMES_MESSAGE, 200);
     } catch (error) {

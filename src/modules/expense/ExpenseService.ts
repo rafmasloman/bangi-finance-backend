@@ -64,6 +64,8 @@ class ExpenseService {
         },
       });
 
+      console.log('history id : ', historyId);
+
       const expense = await prisma.expense.findMany({
         orderBy: {
           date: 'asc',
@@ -195,9 +197,9 @@ class ExpenseService {
 
   async getExpenseSummary(id?: string) {
     try {
-      const ppnExpense = await prisma.expense.aggregate({
+      const operationalExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'PPN',
+          expenseCategory: 'OPERASIONAL',
         },
 
         _sum: {
@@ -205,9 +207,9 @@ class ExpenseService {
         },
       });
 
-      const managementExpense = await prisma.expense.aggregate({
+      const payrollExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'SERVICE_MANAJEMEN',
+          expenseCategory: 'GAJI_KARYAWAN',
         },
 
         _sum: {
@@ -218,6 +220,26 @@ class ExpenseService {
       const salesExpense = await prisma.expense.aggregate({
         where: {
           expenseCategory: 'SALES',
+        },
+
+        _sum: {
+          price: true,
+        },
+      });
+
+      const serviceEmployeeExpense = await prisma.expense.aggregate({
+        where: {
+          expenseCategory: 'SERVICE_KARYAWAN',
+        },
+
+        _sum: {
+          price: true,
+        },
+      });
+
+      const serviceManagementExpense = await prisma.expense.aggregate({
+        where: {
+          expenseCategory: 'SERVICE_MANAJEMEN',
         },
 
         _sum: {
@@ -242,8 +264,10 @@ class ExpenseService {
         (salesExpense._sum.price ?? 0) +
         (totalPaidService.totalPaid ?? 0) -
         (historyRaw?.remainingRawMaterials ?? 0);
-      const operational = ppnExpense._sum.price ?? 0;
-      const payrollEmployee = managementExpense._sum.price ?? 0;
+      const operational = operationalExpense._sum.price ?? 0;
+      const payrollEmployee = payrollExpense._sum.price ?? 0;
+      const managementService = serviceManagementExpense._sum.price ?? 0;
+      const employeeService = serviceEmployeeExpense._sum.price ?? 0;
 
       const totalExpense =
         rawMaterials + (operational ?? 0) + (payrollEmployee ?? 0);
@@ -253,6 +277,8 @@ class ExpenseService {
         operational,
         payrollEmployee,
         totalExpense,
+        managementService,
+        employeeService,
       };
     } catch (error) {
       throw error;

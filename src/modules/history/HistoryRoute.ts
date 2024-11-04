@@ -46,7 +46,7 @@ class HistoryRoute {
 
   getHistoryServiceDataStats() {
     return this.router.get(
-      '/:id/stats',
+      '/:historyId/stats',
       authMiddleware,
       this.historyController.getHistoryRemainingData,
     );

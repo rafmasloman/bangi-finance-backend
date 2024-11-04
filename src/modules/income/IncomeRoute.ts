@@ -45,7 +45,7 @@ class IncomeRoute {
 
   getTotalIncomeAnalytics() {
     return this.router.get(
-      '/analytics',
+      '/:id/analytics',
       authMiddleware,
       this.incomeController.getTotalIncomeAnalytics,
     );
