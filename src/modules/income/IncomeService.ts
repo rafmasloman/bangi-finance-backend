@@ -345,7 +345,7 @@ class IncomeService {
       return {
         profit: {
           amount: profit,
-          percent: Math.round(profitPercent),
+          percent: Math.round(profitPercent).toFixed(3).replace('.', ','),
         },
         foodCost: Math.round(foodCost).toFixed(3).replace('.', ','),
         operational: Math.round(operational).toFixed(3).replace('.', ','),
