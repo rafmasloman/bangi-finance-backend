@@ -34,16 +34,14 @@ class AuthService {
   }
 
   async login(params: LoginDTO) {
-    const { email, password } = params;
+    const { email, password, username } = params;
 
     try {
-      const user = await prisma.users.findUnique({
+      const user = await prisma.users.findFirst({
         where: {
-          email,
+          username,
         },
       });
-
-      console.log('login user : ', user);
 
       // if (!user) {
       //   console.log('error');

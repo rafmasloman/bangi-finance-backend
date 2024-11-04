@@ -8,6 +8,7 @@ export class RegisterDTO {
 }
 
 export class LoginDTO {
-  email: string;
+  email?: string;
   password: string;
+  username: string;
 }
