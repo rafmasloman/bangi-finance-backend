@@ -304,22 +304,37 @@ class IncomeService {
         historyId,
       );
 
-      expenseTotal.rawMaterials;
-
       const profit = salesTotal.totalSales - expenseTotal.totalExpense;
-      const profitPercent = (profit / (salesTotal.itemSales ?? 0)) * 100;
+      // const profitPercent = (profit / (salesTotal.itemSales ?? 0)) * 100;
+
+      // const foodCost =
+      //   (expenseTotal.rawMaterials / (salesTotal.itemSales ?? 0)) * 100;
+      // const operational =
+      //   (expenseTotal.operational / (salesTotal.itemSales ?? 0)) * 100;
+      // const employeePayroll =
+      //   (expenseTotal.payrollEmployee / (salesTotal.itemSales ?? 0)) * 100;
+
+      // const discFoc =
+      //   ((salesTotal.totalDiscount + (salesTotal.totalFoc ?? 0)) /
+      //     (salesTotal.itemSales ?? 0)) *
+      //   100;
+
+      const itemSales = salesTotal.itemSales ?? 0;
+
+      const profitPercent = itemSales > 0 ? (profit / itemSales) * 100 : 0; // Menetapkan 0 jika itemSales <= 0
 
       const foodCost =
-        (expenseTotal.rawMaterials / (salesTotal.itemSales ?? 0)) * 100;
+        itemSales > 0 ? (expenseTotal.rawMaterials / itemSales) * 100 : 0;
       const operational =
-        (expenseTotal.operational / (salesTotal.itemSales ?? 0)) * 100;
+        itemSales > 0 ? (expenseTotal.operational / itemSales) * 100 : 0;
       const employeePayroll =
-        (expenseTotal.payrollEmployee / (salesTotal.itemSales ?? 0)) * 100;
-
+        itemSales > 0 ? (expenseTotal.payrollEmployee / itemSales) * 100 : 0;
       const discFoc =
-        ((salesTotal.totalDiscount + (salesTotal.totalFoc ?? 0)) /
-          (salesTotal.itemSales ?? 0)) *
-        100;
+        itemSales > 0
+          ? ((salesTotal.totalDiscount + (salesTotal.totalFoc ?? 0)) /
+              itemSales) *
+            100
+          : 0;
 
       return {
         profit: {
