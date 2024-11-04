@@ -1,6 +1,7 @@
 import { CreateIncomeDTO, UpdateIncomeDTO } from '../../dto/IncomeDTO';
 import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
+import { getPaymentStatusTotalUtils } from '../../utils/supplier.utils';
 import ExpenseService from '../expense/ExpenseService';
 
 class IncomeService {

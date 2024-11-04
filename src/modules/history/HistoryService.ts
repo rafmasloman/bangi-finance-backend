@@ -2,6 +2,7 @@ import { ExpenseCategories } from '@prisma/client';
 import { CreateHistoryDTO, UpdateHistoryDTO } from '../../dto/HistoryDTO';
 import prisma from '../../libs/prisma/orm.libs';
 import ExpenseService from '../expense/ExpenseService';
+import { getPaymentStatusTotalUtils } from '../../utils/supplier.utils';
 
 class HistoryService {
   async createHistory(payload: CreateHistoryDTO) {
@@ -194,6 +195,8 @@ class HistoryService {
         },
       });
 
+      const totalPaidSupplier = await getPaymentStatusTotalUtils(historyId);
+
       const totalSalesExpense = await prisma.expense.aggregate({
         where: {
           expenseCategory: 'SALES',
@@ -306,6 +309,7 @@ class HistoryService {
       let remainingSales =
         (income._sum.totalSales ?? 0) -
         (totalSalesExpense._sum.price ?? 0) -
+        totalPaidSupplier.totalPaid -
         payrollExpenseSum -
         operationalExpenseSum;
 
@@ -325,17 +329,6 @@ class HistoryService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async getHistoryStatsAnalytics(expenseService: ExpenseService) {
-    // const expense = await expenseService.getExpenseAmountByCategory();
-    const history = await prisma.history.findFirst({
-      where: {
-        month: '',
-      },
-    });
-
-    // const remainingManagementLastMonth =expense.serviceEmployee - history?.remainingManagementService
   }
 
   async getMDRHistory(id: string) {
@@ -375,6 +368,8 @@ class HistoryService {
         totalMDR,
       };
     } catch (error) {
+      console.log('error : ', error);
+
       throw error;
     }
   }
