@@ -200,6 +200,7 @@ class ExpenseService {
       const operationalExpense = await prisma.expense.aggregate({
         where: {
           expenseCategory: 'OPERASIONAL',
+          historyId: id,
         },
 
         _sum: {
@@ -210,6 +211,7 @@ class ExpenseService {
       const payrollExpense = await prisma.expense.aggregate({
         where: {
           expenseCategory: 'GAJI_KARYAWAN',
+          historyId: id,
         },
 
         _sum: {
@@ -220,6 +222,7 @@ class ExpenseService {
       const salesExpense = await prisma.expense.aggregate({
         where: {
           expenseCategory: 'SALES',
+          historyId: id,
         },
 
         _sum: {
@@ -230,6 +233,7 @@ class ExpenseService {
       const serviceEmployeeExpense = await prisma.expense.aggregate({
         where: {
           expenseCategory: 'SERVICE_KARYAWAN',
+          historyId: id,
         },
 
         _sum: {
@@ -240,6 +244,7 @@ class ExpenseService {
       const serviceManagementExpense = await prisma.expense.aggregate({
         where: {
           expenseCategory: 'SERVICE_MANAJEMEN',
+          historyId: id,
         },
 
         _sum: {
