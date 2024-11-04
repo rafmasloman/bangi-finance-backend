@@ -230,6 +230,24 @@ class HistoryService {
         },
       });
 
+      const totalEmployeePayrollExpense = await prisma.expense.aggregate({
+        where: {
+          expenseCategory: 'GAJI_KARYAWAN',
+        },
+        _sum: {
+          price: true,
+        },
+      });
+
+      const totalOperationalExpense = await prisma.expense.aggregate({
+        where: {
+          expenseCategory: 'OPERASIONAL',
+        },
+        _sum: {
+          price: true,
+        },
+      });
+
       const history = await prisma.history.findFirst({
         where: {
           id: historyId,
@@ -252,7 +270,15 @@ class HistoryService {
         ? 0
         : totalTaxExpense._sum.price;
 
-      const serviceEmployeExpenseSum = !totalEmployeeServiceExpense._sum.price
+      const payrollExpenseSum = !totalEmployeePayrollExpense._sum.price
+        ? 0
+        : totalEmployeePayrollExpense._sum.price;
+
+      const operationalExpenseSum = !totalOperationalExpense._sum.price
+        ? 0
+        : totalOperationalExpense._sum.price;
+
+      const serviceEmployeeExpenseSum = !totalEmployeeServiceExpense._sum.price
         ? 0
         : totalEmployeeServiceExpense._sum.price;
 
@@ -274,15 +300,14 @@ class HistoryService {
 
       let remainingMontEmployeeService =
         (income._sum.service ?? 0) * 0.6 -
-        serviceEmployeExpenseSum +
+        serviceEmployeeExpenseSum +
         history.remainingManagementService;
 
       let remainingSales =
         (income._sum.totalSales ?? 0) -
         (totalSalesExpense._sum.price ?? 0) -
-        serviceEmployeExpenseSum -
-        serviceManagementExpenseSum -
-        taxExpenseSum;
+        payrollExpenseSum -
+        operationalExpenseSum;
 
       const balance =
         remainingSales +
