@@ -262,7 +262,7 @@ class IncomeService {
           historyId,
         },
         _sum: {
-          totalSales: true,
+          itemSales: true,
         },
       });
 
@@ -279,17 +279,17 @@ class IncomeService {
         (totalBillDiscount._sum.billDiscount ?? 0) +
         (totalItemDiscount._sum.itemDiscount ?? 0);
       const totalSales =
-        (totalItemSales._sum.totalSales ?? 0) -
+        (totalItemSales._sum.itemSales ?? 0) -
         totalDiscount -
         (focBill._sum.focBill ?? 0);
 
       const discByFoc =
         ((totalDiscount + (focBill._sum.focBill ?? 0)) /
-          (totalItemSales._sum.totalSales ?? 0)) *
+          (totalItemSales._sum.itemSales ?? 0)) *
         100;
 
       return {
-        itemSales: totalItemSales._sum.totalSales,
+        itemSales: totalItemSales._sum.itemSales,
         totalDiscount,
         totalFoc: focBill._sum.focBill,
         totalSales,
