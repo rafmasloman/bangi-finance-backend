@@ -326,10 +326,10 @@ class HistoryService {
         remainingMonthTax;
 
       return {
-        remainingMontEmployeeService: Math.ceil(
+        remainingMontEmployeeService: Math.round(
           remainingMontEmployeeService,
         ).toFixed(3),
-        remainingMonthManagementService: Math.ceil(
+        remainingMonthManagementService: Math.round(
           remainingMonthManagementService,
         ).toFixed(3),
         remainingMonthTax,

@@ -222,8 +222,8 @@ class IncomeService {
         servicesAnalytics: {
           total: totalServicesAnalytics,
           category: {
-            management: managementServiceAnalytics,
-            employe: employeServiceAnalytics,
+            management: Math.round(managementServiceAnalytics).toFixed(3),
+            employe: Math.round(employeServiceAnalytics).toFixed(3),
           },
         },
         collectionAnalytics: {
@@ -232,7 +232,7 @@ class IncomeService {
         ppnAnalytics: {
           total: ppnAnalytics,
         },
-        average: Math.floor(average),
+        average: Math.ceil(average),
       };
     } catch (error) {
       throw error;
@@ -347,10 +347,10 @@ class IncomeService {
           amount: profit,
           percent: Math.round(profitPercent),
         },
-        foodCost: Math.floor(foodCost),
-        operational: Math.floor(operational),
-        employeePayroll: Math.floor(employeePayroll),
-        discFoc: Math.floor(discFoc),
+        foodCost: Math.ceil(foodCost),
+        operational: Math.ceil(operational),
+        employeePayroll: Math.ceil(employeePayroll),
+        discFoc: Math.ceil(discFoc),
       };
     } catch (error) {
       throw error;
