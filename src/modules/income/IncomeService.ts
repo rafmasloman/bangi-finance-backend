@@ -1,7 +1,6 @@
-import { CreateIncomeDTO, UpdateIncomeDTO } from '../../dto/IncomeDTO';
+import { CreateIncomeDTO } from '../../dto/IncomeDTO';
 import { paginationHelper } from '../../helpers/pagination.helper';
 import prisma from '../../libs/prisma/orm.libs';
-import { getPaymentStatusTotalUtils } from '../../utils/supplier.utils';
 import ExpenseService from '../expense/ExpenseService';
 
 class IncomeService {
@@ -186,8 +185,6 @@ class IncomeService {
           },
         },
       });
-
-      console.log('incomes : ', historyId);
 
       const collectTotalSales = incomes.map((tSales) => tSales.totalSales);
       const collectServices = incomes.map((service) => service.service);
