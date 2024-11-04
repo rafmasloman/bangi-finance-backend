@@ -229,8 +229,19 @@ class ExpenseService {
         id,
       );
 
+      const historyRaw = await prisma.history.findFirst({
+        where: {
+          id,
+        },
+        select: {
+          remainingRawMaterials: true,
+        },
+      });
+
       const rawMaterials =
-        (salesExpense._sum.price ?? 0) + (totalPaidService.totalPaid ?? 0);
+        (salesExpense._sum.price ?? 0) +
+        (totalPaidService.totalPaid ?? 0) -
+        (historyRaw?.remainingRawMaterials ?? 0);
       const operational = ppnExpense._sum.price ?? 0;
       const payrollEmployee = managementExpense._sum.price ?? 0;
 
