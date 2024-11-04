@@ -232,7 +232,7 @@ class IncomeService {
         ppnAnalytics: {
           total: ppnAnalytics,
         },
-        average: Math.ceil(average),
+        average: Math.round(average).toFixed(2),
       };
     } catch (error) {
       throw error;
@@ -347,10 +347,12 @@ class IncomeService {
           amount: profit,
           percent: Math.round(profitPercent),
         },
-        foodCost: Math.ceil(foodCost),
-        operational: Math.ceil(operational),
-        employeePayroll: Math.ceil(employeePayroll),
-        discFoc: Math.ceil(discFoc),
+        foodCost: Math.round(foodCost).toFixed(3).replace('.', ','),
+        operational: Math.round(operational).toFixed(3).replace('.', ','),
+        employeePayroll: Math.round(employeePayroll)
+          .toFixed(3)
+          .replace('.', ','),
+        discFoc: Math.round(discFoc).toFixed(3).replace('.', ','),
       };
     } catch (error) {
       throw error;
