@@ -16,7 +16,6 @@ const authMiddleware = (
 
     if (!token) {
       //   throw new Error();
-      console.log('error');
     }
 
     const decoded = jwt.verify(token!, process.env.JWT_SECRET_KEY as string);
@@ -27,8 +26,6 @@ const authMiddleware = (
 
     next();
   } catch (error) {
-    console.log('auth middleware : ', error);
-
     next(error);
   }
 };

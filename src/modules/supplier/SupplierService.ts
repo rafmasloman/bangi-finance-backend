@@ -58,8 +58,6 @@ class SupplierService {
 
       return supplier;
     } catch (error) {
-      console.log('errors : ', error);
-
       throw error;
     }
   }
@@ -305,8 +303,6 @@ class SupplierService {
 
       return supplier;
     } catch (error) {
-      console.log('error : ', error);
-
       throw error;
     }
   }

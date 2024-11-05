@@ -14,8 +14,6 @@ class ExpenseService {
     const { evidence, expenseCategory, note, price, date, userId, historyId } =
       payload;
 
-    console.log('expense data : ', payload);
-
     try {
       const expense = prisma.expense.create({
         data: {
@@ -63,8 +61,6 @@ class ExpenseService {
           role: true,
         },
       });
-
-      console.log('history id : ', historyId);
 
       const expense = await prisma.expense.findMany({
         orderBy: {
@@ -315,8 +311,6 @@ class ExpenseService {
 
       return expense;
     } catch (error) {
-      console.log('error : ', error);
-
       throw error;
     }
   }

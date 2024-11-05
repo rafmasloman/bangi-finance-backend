@@ -10,9 +10,6 @@ export const generateComparePassword = async (
   password: string,
   currentPassword: string,
 ) => {
-  console.log('current : ', currentPassword);
-  console.log('password : ', password);
-
   const comparePassword = await bcrypt.compare(currentPassword, password);
 
   return comparePassword;

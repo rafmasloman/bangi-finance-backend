@@ -29,8 +29,6 @@ class HistoryService {
 
       return history;
     } catch (error) {
-      console.log('create history error : ', error);
-
       throw error;
     }
   }
@@ -52,15 +50,11 @@ class HistoryService {
 
   async getAllHistoryByUserId(userId: string) {
     try {
-      console.log('user id : ', userId);
-
       const historiesUser = await prisma.history.findMany({
         where: {
           userId,
         },
       });
-
-      console.log('histories : ', historiesUser);
 
       return historiesUser;
     } catch (error) {
@@ -154,10 +148,6 @@ class HistoryService {
       const managementServiceAnalytics = collectTotalService * 0.4;
       const employeServiceAnalytics = collectTotalService * 0.6;
 
-      console.log('employee : ', employeServiceAnalytics);
-      console.log('total tess : ', collectTotalService);
-      console.log('remaning service data : ', remainingService.service);
-
       let remainingServiceData = 0;
 
       if (name.toLowerCase() === 'SERVICE MANAJEMEN'.toLowerCase()) {
@@ -170,7 +160,6 @@ class HistoryService {
           employeServiceAnalytics -
           (remainingService.service.managementExpense +
             (history?.remainingEmployeeService ?? 0));
-        console.log('total tess : ', remainingServiceData);
       }
 
       return {
@@ -378,8 +367,6 @@ class HistoryService {
         totalMDR,
       };
     } catch (error) {
-      console.log('error : ', error);
-
       throw error;
     }
   }
@@ -417,8 +404,6 @@ class HistoryService {
 
       return history;
     } catch (error) {
-      console.log('error : ', error);
-
       throw error;
     }
   }

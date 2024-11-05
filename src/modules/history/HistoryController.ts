@@ -220,8 +220,6 @@ class HistoryController {
 
       const updateMDR = await this.historyService.updateMDR(id, { mdr });
 
-      console.log('update : ', updateMDR);
-
       return sendSuccessResponse(
         res,
         updateMDR,
@@ -229,8 +227,6 @@ class HistoryController {
         201,
       );
     } catch (error) {
-      console.log('error : ', error);
-
       next(error);
     }
   };

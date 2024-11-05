@@ -81,16 +81,12 @@ class ExpenseController {
         pageSize?: string;
       };
 
-      console.log('history id : ', historyId);
-
       const expenses = await this.expenseService.getAllExpenses(
         historyId,
         userId,
         Number(page),
         Number(pageSize),
       );
-
-      console.log('expenses : ', expenses);
 
       return res.json({
         statusCode: 200,

@@ -12,8 +12,6 @@ const checkAccess = (req: Request, res: Response, next: NextFunction) => {
 
     next();
   } catch (error) {
-    console.log('auth middleware : ', error);
-
     next(error);
   }
 };

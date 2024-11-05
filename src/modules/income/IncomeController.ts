@@ -22,8 +22,6 @@ class IncomeController {
   }
 
   createIncome = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('body : ', req.body);
-
     try {
       const {
         date,
@@ -51,8 +49,6 @@ class IncomeController {
 
       return sendSuccessResponse(res, income, READ_INCOMES_MESSAGE, 201);
     } catch (error) {
-      console.log('error : ', error);
-
       next(error);
     }
   };
@@ -74,7 +70,6 @@ class IncomeController {
         page?: string;
         pageSize?: string;
       };
-      console.log('page : ', page);
 
       const incomes = await this.incomeService.getAllIncomes(
         historyId,

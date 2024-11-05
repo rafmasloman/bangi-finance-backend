@@ -53,7 +53,6 @@ class AuthService {
         user?.password ?? '',
         password,
       );
-      console.log(compareData);
 
       if (!compareData) {
         throw new Error();
@@ -66,8 +65,6 @@ class AuthService {
 
       return { token };
     } catch (error) {
-      console.log('error : ', error);
-
       throw error;
     }
   }

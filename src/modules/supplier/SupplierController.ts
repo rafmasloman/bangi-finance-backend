@@ -62,8 +62,6 @@ class SupplierController {
         201,
       );
     } catch (error) {
-      console.log('error : ', error);
-
       next(error);
     }
   };
@@ -213,14 +211,11 @@ class SupplierController {
     try {
       const { id } = req.params;
       const { supplierId, paymentStatus } = req.body;
-      console.log('body : ', req.body);
 
       const supplier = await this.supplierService.updateSupplierStatus(
         supplierId,
         paymentStatus as 'PAID' | 'UNPAID',
       );
-
-      console.log('supplier');
 
       return sendSuccessResponse(
         res,
@@ -228,8 +223,6 @@ class SupplierController {
         'Supplier Payment Status updated successfully',
       );
     } catch (error) {
-      console.log('error : ', error);
-
       next(error);
     }
   };
