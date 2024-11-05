@@ -220,7 +220,7 @@ class SupplierService {
 
       return {
         payment,
-        totalPayment: totalPayment._sum.totalAmount,
+        totalPayment: totalPayment._sum.totalAmount ?? 0,
       };
     } catch (error) {
       throw error;
