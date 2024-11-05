@@ -2,7 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
 import UserService from './UserService';
-import { CreateUserDTO } from '../../dto/UserDTO';
+import { CreateUserDTO, UpdateUserDTO } from '../../dto/UserDTO';
 import { sendSuccessResponse } from '../../helpers/response.helper';
 import { BaseRequestType } from '../../middleware/auth.middleware';
 
@@ -116,6 +116,36 @@ class UserController {
       const user = await this.userService.deleteUser(id);
 
       return sendSuccessResponse(res, null, 'User deleted successfully', 200);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    const {
+      email,
+      password,
+      role,
+      username,
+      firstname,
+      lastname,
+      phoneNumber,
+    }: UpdateUserDTO = req.body;
+
+    try {
+      const user = this.userService.updateUser(id, {
+        email,
+        password,
+        role,
+        username,
+        firstname,
+        lastname,
+        phoneNumber,
+      });
+
+      return sendSuccessResponse(res, user, 'User update succesfully', 201);
     } catch (error) {
       next(error);
     }

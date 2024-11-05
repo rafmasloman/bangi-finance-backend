@@ -17,7 +17,7 @@ class UserRoute {
     return this.router.get(
       '/',
       authMiddleware,
-      // checkAccess,
+      checkAccess,
       this.userController.getAllUsers,
     );
   }
@@ -26,6 +26,7 @@ class UserRoute {
     return this.router.get(
       '/:id',
       authMiddleware,
+      checkAccess,
       this.userController.getDetailUser,
     );
   }
@@ -34,6 +35,7 @@ class UserRoute {
     return this.router.post(
       '/',
       authMiddleware,
+      checkAccess,
       this.userController.createUser,
     );
   }
@@ -42,7 +44,17 @@ class UserRoute {
     return this.router.delete(
       '/:id',
       authMiddleware,
+      checkAccess,
       this.userController.deleteUser,
+    );
+  }
+
+  private updateUserRoute() {
+    return this.router.put(
+      '/:id',
+      authMiddleware,
+      checkAccess,
+      this.userController.updateUser,
     );
   }
 
@@ -50,6 +62,7 @@ class UserRoute {
     this.getAllUsersRoute();
     this.createUserRoute();
     this.deleteUserRoute();
+    this.updateUserRoute();
     this.getUserDetail();
 
     return this.router;

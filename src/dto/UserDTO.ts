@@ -58,3 +58,13 @@ export interface CreateUserDTO {
   role: 'EMPLOYEE';
   username: string;
 }
+
+export interface UpdateUserDTO {
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+  phoneNumber?: string;
+  password?: string;
+  role: 'EMPLOYEE' | 'DIRECTOR';
+  username?: string;
+}
