@@ -345,14 +345,12 @@ class IncomeService {
       return {
         profit: {
           amount: profit,
-          percent: Math.round(profitPercent).toFixed(3).replace('.', ','),
+          percent: profitPercent.toFixed(3).replace('.', ','),
         },
-        foodCost: Math.round(foodCost).toFixed(3).replace('.', ','),
-        operational: Math.round(operational).toFixed(3).replace('.', ','),
-        employeePayroll: Math.round(employeePayroll)
-          .toFixed(3)
-          .replace('.', ','),
-        discFoc: Math.round(discFoc).toFixed(3).replace('.', ','),
+        foodCost: foodCost.toFixed(3).replace('.', ','),
+        operational: operational.toFixed(3).replace('.', ','),
+        employeePayroll: employeePayroll.toFixed(3).replace('.', ','),
+        discFoc: discFoc.toFixed(3).replace('.', ','),
       };
     } catch (error) {
       throw error;
