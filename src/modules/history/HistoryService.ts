@@ -289,7 +289,7 @@ class HistoryService {
         (income?._sum.ppn ?? 0) -
         taxExpenseSum +
         history?.remainingTax -
-        mdr.totalMDR;
+        Number(mdr.totalMDR);
 
       let remainingMonthManagementService =
         (income._sum.service ?? 0) * 0.4 -
@@ -364,7 +364,7 @@ class HistoryService {
 
       return {
         mdr: mdr.mdr.toFixed(3),
-        totalMDR,
+        totalMDR: totalMDR.toFixed(3),
       };
     } catch (error) {
       throw error;
