@@ -353,7 +353,7 @@ class HistoryService {
 
       if (!mdr?.mdr) {
         return {
-          mdr: mdr?.mdr,
+          mdr: mdr?.mdr ?? 0,
           totalMDR: 0,
         };
       }
@@ -363,7 +363,7 @@ class HistoryService {
         : (mdr.mdr * totalCollection[0]._sum.totalCollection) / 100;
 
       return {
-        mdr: mdr.mdr,
+        mdr: mdr.mdr.toFixed(3),
         totalMDR,
       };
     } catch (error) {
