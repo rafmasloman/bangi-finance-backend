@@ -26,7 +26,7 @@ class UserRoute {
     return this.router.get(
       '/:id',
       authMiddleware,
-      checkAccess,
+      // checkAccess,
       this.userController.getDetailUser,
     );
   }
