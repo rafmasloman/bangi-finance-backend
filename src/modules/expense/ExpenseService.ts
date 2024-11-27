@@ -1,8 +1,8 @@
-import { ExpenseCategories } from '@prisma/client';
-import { CreateExpenseDTO, UpdateExpenseDTO } from '../../dto/ExpenseDTO';
-import { paginationHelper } from '../../helpers/pagination.helper';
-import prisma from '../../libs/prisma/orm.libs';
-import SupplierService from '../supplier/SupplierService';
+import { ExpenseCategories, Prisma } from "@prisma/client";
+import { CreateExpenseDTO, UpdateExpenseDTO } from "../../dto/ExpenseDTO";
+import { paginationHelper } from "../../helpers/pagination.helper";
+import prisma from "../../libs/prisma/orm.libs";
+import SupplierService from "../supplier/SupplierService";
 
 class ExpenseService {
   supplierService: SupplierService;
@@ -47,6 +47,7 @@ class ExpenseService {
     userId: string,
     page?: number,
     pageSize?: number,
+    category?: Prisma.EnumExpenseCategoriesFilter | undefined
   ) {
     try {
       const totalRecords = await prisma.expense.count();
@@ -64,11 +65,12 @@ class ExpenseService {
 
       const expense = await prisma.expense.findMany({
         orderBy: {
-          date: 'asc',
+          date: "asc",
         },
         where: {
           historyId,
-          userId: user?.role === 'DIRECTOR' ? undefined : userId,
+          userId: user?.role === "DIRECTOR" ? undefined : userId,
+          expenseCategory: !!category ? category : undefined,
         },
         include: {
           histories: {
@@ -107,17 +109,17 @@ class ExpenseService {
   async getExpenseAmountByCategory(historyId: string) {
     try {
       const totalCategories = await prisma.expense.groupBy({
-        by: ['expenseCategory'],
+        by: ["expenseCategory"],
         where: {
           expenseCategory: {
             in: [
-              'GAJI_KARYAWAN',
-              'OPERASIONAL',
-              'PENGEMBALIAN_MODAL',
-              'PPN',
-              'SALES',
-              'SERVICE_KARYAWAN',
-              'SERVICE_MANAJEMEN',
+              "GAJI_KARYAWAN",
+              "OPERASIONAL",
+              "PENGEMBALIAN_MODAL",
+              "PPN",
+              "SALES",
+              "SERVICE_KARYAWAN",
+              "SERVICE_MANAJEMEN",
             ],
           },
           histories: {
@@ -131,11 +133,11 @@ class ExpenseService {
 
       const totalExpenseByCategory = totalCategories.reduce(
         (acc, category) => acc + (category._sum.price ?? 0),
-        0,
+        0
       );
 
       const totalPaidService = await this.supplierService.getPaymentStatusTotal(
-        historyId,
+        historyId
       );
 
       const totalExpense =
@@ -156,7 +158,7 @@ class ExpenseService {
 
   async getExpenseHistoryStats(
     historyId: string,
-    expenseCategoryName: ExpenseCategories,
+    expenseCategoryName: ExpenseCategories
   ) {
     try {
       const expense = await prisma.expense.findMany({
@@ -195,7 +197,7 @@ class ExpenseService {
     try {
       const operationalExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'OPERASIONAL',
+          expenseCategory: "OPERASIONAL",
           historyId: id,
         },
 
@@ -206,7 +208,7 @@ class ExpenseService {
 
       const payrollExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'GAJI_KARYAWAN',
+          expenseCategory: "GAJI_KARYAWAN",
           historyId: id,
         },
 
@@ -217,7 +219,7 @@ class ExpenseService {
 
       const salesExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'SALES',
+          expenseCategory: "SALES",
           historyId: id,
         },
 
@@ -228,7 +230,7 @@ class ExpenseService {
 
       const serviceEmployeeExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'SERVICE_KARYAWAN',
+          expenseCategory: "SERVICE_KARYAWAN",
           historyId: id,
         },
 
@@ -239,7 +241,7 @@ class ExpenseService {
 
       const serviceManagementExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'SERVICE_MANAJEMEN',
+          expenseCategory: "SERVICE_MANAJEMEN",
           historyId: id,
         },
 
@@ -249,7 +251,7 @@ class ExpenseService {
       });
 
       const totalPaidService = await this.supplierService.getPaymentStatusTotal(
-        id,
+        id
       );
 
       const historyRaw = await prisma.history.findFirst({

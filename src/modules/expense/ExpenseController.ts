@@ -1,8 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
-import ExpenseService from './ExpenseService';
-import { CreateExpenseDTO, UpdateExpenseDTO } from '../../dto/ExpenseDTO';
-import { sendSuccessResponse } from '../../helpers/response.helper';
-import { BaseRequestType } from '../../middleware/auth.middleware';
+import { NextFunction, Request, Response } from "express";
+import ExpenseService from "./ExpenseService";
+import { CreateExpenseDTO, UpdateExpenseDTO } from "../../dto/ExpenseDTO";
+import { sendSuccessResponse } from "../../helpers/response.helper";
+import { BaseRequestType } from "../../middleware/auth.middleware";
+import { Prisma } from "@prisma/client";
 
 class ExpenseController {
   private expenseService: ExpenseService;
@@ -35,7 +36,7 @@ class ExpenseController {
 
       return res.json({
         statusCode: 201,
-        message: 'Expense Created',
+        message: "Expense Created",
         data: expense,
       });
     } catch (error) {
@@ -46,7 +47,7 @@ class ExpenseController {
   getExpenseAmountByCategory = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -56,7 +57,7 @@ class ExpenseController {
       return sendSuccessResponse(
         res,
         expenseAmount,
-        'Expense Total by Category fetched successfully',
+        "Expense Total by Category fetched successfully"
       );
     } catch (error) {
       next(error);
@@ -66,19 +67,20 @@ class ExpenseController {
   getAllExpenses = async (
     req: BaseRequestType,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const userId = req.user?.id;
 
       if (!userId) {
-        throw new Error('User Not Found');
+        throw new Error("User Not Found");
       }
 
-      const { historyId, page, pageSize } = req.query as {
+      const { historyId, page, pageSize, category } = req.query as {
         historyId: string;
         page?: string;
         pageSize?: string;
+        category: Prisma.EnumExpenseCategoriesFilter | undefined;
       };
 
       const expenses = await this.expenseService.getAllExpenses(
@@ -86,11 +88,12 @@ class ExpenseController {
         userId,
         Number(page),
         Number(pageSize),
+        category
       );
 
       return res.json({
         statusCode: 200,
-        message: 'Success Get All Expenses Data',
+        message: "Success Get All Expenses Data",
         data: expenses,
       });
     } catch (error) {
@@ -101,7 +104,7 @@ class ExpenseController {
   getDetailExpense = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -110,7 +113,7 @@ class ExpenseController {
 
       return res.json({
         statusCode: 200,
-        message: 'Succes get expense detail',
+        message: "Succes get expense detail",
         data: expense,
       });
     } catch (error) {
@@ -121,7 +124,7 @@ class ExpenseController {
   getExpenseSummary = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -131,7 +134,7 @@ class ExpenseController {
       return sendSuccessResponse(
         res,
         expenseSummary,
-        'Expense Summary fetched successfully',
+        "Expense Summary fetched successfully"
       );
     } catch (error) {
       next(error);
@@ -141,7 +144,7 @@ class ExpenseController {
   getExpenseCategory = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const expenseCategory = await this.expenseService.getExpenseCategory();
@@ -149,7 +152,7 @@ class ExpenseController {
       return sendSuccessResponse(
         res,
         expenseCategory,
-        'Expense Category fetch succesfully',
+        "Expense Category fetch succesfully"
       );
     } catch (error) {
       next(error);
@@ -181,7 +184,7 @@ class ExpenseController {
 
       return res.json({
         statusCode: 201,
-        message: 'Expense Updated',
+        message: "Expense Updated",
         data: expense,
       });
     } catch (error) {
@@ -196,7 +199,7 @@ class ExpenseController {
 
       return res.json({
         statusCode: 200,
-        message: 'Expense Deleted',
+        message: "Expense Deleted",
       });
     } catch (error) {
       next(error);
