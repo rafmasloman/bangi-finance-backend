@@ -67,15 +67,21 @@ class SupplierService {
     userId: string,
     page?: number,
     pageSize?: number,
+    supplierCompanyId?: number
   ) {
     try {
+
+
+
       const totalSupplier = await prisma.supplier.count();
 
       const pagination = paginationHelper(page, pageSize, totalSupplier);
 
+
       const supplier = await prisma.supplier.findMany({
         where: {
           historyId,
+          ...(supplierCompanyId ? { supplierCompanyId } : {}),
         },
         include: {
           supplierCompany: {

@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from "express";
 import {
   CreateSupplierCompanyDTO,
   UpdateSupplierCompanyDTO,
-} from '../../dto/SupplierCompanyDTO';
-import SupplierCompanyService from './SupplierCompanyService';
-import { sendSuccessResponse } from '../../helpers/response.helper';
+} from "../../dto/SupplierCompanyDTO";
+import SupplierCompanyService from "./SupplierCompanyService";
+import { sendSuccessResponse } from "../../helpers/response.helper";
 
 class SupplierCompanyController {
   private supplierCompanyService: SupplierCompanyService;
@@ -16,7 +16,7 @@ class SupplierCompanyController {
   createSupplierCompany = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { name }: CreateSupplierCompanyDTO = req.body;
@@ -27,8 +27,8 @@ class SupplierCompanyController {
       return sendSuccessResponse(
         res,
         supplierCompanies,
-        'Supplier Companies created successfully',
-        201,
+        "Supplier Companies created successfully",
+        201
       );
     } catch (error) {
       next(error);
@@ -38,7 +38,7 @@ class SupplierCompanyController {
   getAllSupplierCompany = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const supplierCompanies =
@@ -47,7 +47,26 @@ class SupplierCompanyController {
       return sendSuccessResponse(
         res,
         supplierCompanies,
-        'Supplier Companies fetched succesfully',
+        "Supplier Companies fetched succesfully"
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getSupplierCompanyBySupplier = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const supplierCompanies =
+        await this.supplierCompanyService.getAllSupplierCompanyBySupplier();
+
+      return sendSuccessResponse(
+        res,
+        supplierCompanies,
+        "Supplier Companies fetched succesfully"
       );
     } catch (error) {
       next(error);
@@ -57,7 +76,7 @@ class SupplierCompanyController {
   getDetailSupplierCompany = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     const { id } = req.params;
     try {
@@ -67,7 +86,7 @@ class SupplierCompanyController {
       return sendSuccessResponse(
         res,
         supplierCompany,
-        'Supplier Company Detail fetched succesfully',
+        "Supplier Company Detail fetched succesfully"
       );
     } catch (error) {
       next(error);
@@ -77,7 +96,7 @@ class SupplierCompanyController {
   updateSupplierCompany = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { name, supplierId }: UpdateSupplierCompanyDTO = req.body;
@@ -90,8 +109,8 @@ class SupplierCompanyController {
       return sendSuccessResponse(
         res,
         supplierCompanies,
-        'Supplier Companies updated successfully',
-        200,
+        "Supplier Companies updated successfully",
+        200
       );
     } catch (error) {
       next(error);
@@ -101,7 +120,7 @@ class SupplierCompanyController {
   deleteSupplierCompany = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -111,8 +130,8 @@ class SupplierCompanyController {
       return sendSuccessResponse(
         res,
         supplierCompanies,
-        'Supplier Companies deleted successfully',
-        200,
+        "Supplier Companies deleted successfully",
+        200
       );
     } catch (error) {
       next(error);

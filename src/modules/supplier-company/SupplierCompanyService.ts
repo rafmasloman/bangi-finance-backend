@@ -1,8 +1,8 @@
 import {
   CreateSupplierCompanyDTO,
   UpdateSupplierCompanyDTO,
-} from '../../dto/SupplierCompanyDTO';
-import prisma from '../../libs/prisma/orm.libs';
+} from "../../dto/SupplierCompanyDTO";
+import prisma from "../../libs/prisma/orm.libs";
 
 class SupplierCompanyService {
   async createSupplierCompany(payload: CreateSupplierCompanyDTO) {
@@ -47,6 +47,29 @@ class SupplierCompanyService {
       });
 
       return companies;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllSupplierCompanyBySupplier() {
+    try {
+      const supplierCompanies = await prisma.supplierCompany.findMany({
+        where: {
+          suppliers: {
+            some: {},
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          suppliers: {
+            take: 1,
+          },
+        },
+      });
+
+      return supplierCompanies;
     } catch (error) {
       throw error;
     }

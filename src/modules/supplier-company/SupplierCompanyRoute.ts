@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import SupplierCompanyController from './SupplierCompany.controller';
-import { authMiddleware } from '../../middleware/auth.middleware';
+import { Router } from "express";
+import SupplierCompanyController from "./SupplierCompany.controller";
+import { authMiddleware } from "../../middleware/auth.middleware";
 
 class SupplierCompanyRoutes {
   private supplierCompanyController: SupplierCompanyController;
@@ -13,40 +13,47 @@ class SupplierCompanyRoutes {
 
   createRoute() {
     return this.router.post(
-      '/',
+      "/",
       //   authMiddleware,
-      this.supplierCompanyController.createSupplierCompany,
+      this.supplierCompanyController.createSupplierCompany
     );
   }
 
   getAllRoute() {
     return this.router.get(
-      '/',
+      "/",
       //   authMiddleware,
-      this.supplierCompanyController.getAllSupplierCompany,
+      this.supplierCompanyController.getAllSupplierCompany
+    );
+  }
+
+  getSuppliers() {
+    return this.router.get(
+      "/suppliers",
+      this.supplierCompanyController.getSupplierCompanyBySupplier
     );
   }
 
   getDetailRoute() {
     return this.router.get(
-      '/:id',
-      this.supplierCompanyController.getDetailSupplierCompany,
+      "/:id",
+      this.supplierCompanyController.getDetailSupplierCompany
     );
   }
 
   updateRoute() {
     return this.router.put(
-      '/:id',
+      "/:id",
       //   authMiddleware,
-      this.supplierCompanyController.updateSupplierCompany,
+      this.supplierCompanyController.updateSupplierCompany
     );
   }
 
   deleteRoute() {
     return this.router.delete(
-      '/:id',
+      "/:id",
       //   authMiddleware,
-      this.supplierCompanyController.deleteSupplierCompany,
+      this.supplierCompanyController.deleteSupplierCompany
     );
   }
 
@@ -55,6 +62,7 @@ class SupplierCompanyRoutes {
     this.getAllRoute();
     this.updateRoute();
     this.deleteRoute();
+    this.getSuppliers();
     this.getDetailRoute();
 
     return this.router;

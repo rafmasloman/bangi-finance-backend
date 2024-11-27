@@ -72,7 +72,7 @@ class SupplierController {
     next: NextFunction,
   ) => {
     try {
-      const { page, pageSize, historyId } = req.query;
+      const { page, pageSize, historyId, supplierCompanyId } = req.query;
 
       const userId = req.user?.id;
 
@@ -85,6 +85,7 @@ class SupplierController {
         userId,
         Number(page),
         Number(pageSize),
+        Number(supplierCompanyId)
       );
 
       return sendSuccessResponse(res, suppliers, READ_SUPPLIERS_MESSAGE);
