@@ -1,24 +1,89 @@
-import { CreateSupplierDTO, UpdateSupplierDTO } from '../../dto/SupplierDTO';
-import { paginationHelper } from '../../helpers/pagination.helper';
-import prisma from '../../libs/prisma/orm.libs';
+import {
+  CreateSupplierDTO,
+  CreateSupplierDTOV2,
+  UpdateSupplierDTO,
+} from "../../dto/SupplierDTO";
+import { paginationHelper } from "../../helpers/pagination.helper";
+import prisma from "../../libs/prisma/orm.libs";
 
 class SupplierService {
-  async createSupplier(params: CreateSupplierDTO) {
+  // async createSupplier(params: CreateSupplierDTO) {
+  //   const {
+  //     discount,
+  //     evidence,
+  //     paymentStatus,
+  //     price,
+  //     quantity,
+  //     ppn,
+  //     supplierCompanyId,
+  //     date,
+  //     historyId,
+  //     userId,
+  //   } = params;
+
+  //   try {
+  //     const totalAmount = quantity * price + ppn;
+  //     const supplier = await prisma.supplier.create({
+  //       data: {
+  //         supplierCompany: {
+  //           connect: {
+  //             id: supplierCompanyId,
+  //           },
+  //         },
+  //         histories: {
+  //           connect: {
+  //             id: historyId,
+  //           },
+  //         },
+  //         user: {
+  //           connect: {
+  //             id: userId,
+  //           },
+  //         },
+
+  //         discount,
+  //         evidence,
+  //         paymentStatus,
+  //         price,
+  //         quantity,
+  //         ppn,
+  //         totalAmount,
+  //         date,
+  //       },
+  //       include: {
+  //         supplierCompany: {
+  //           select: {
+  //             id: true,
+  //             name: true,
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     return supplier;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  async createSupplier(params: CreateSupplierDTOV2) {
     const {
-      discount,
-      evidence,
+      nomorFaktur,
       paymentStatus,
-      price,
-      quantity,
-      ppn,
       supplierCompanyId,
       date,
+      totalAmount,
+      jatuhTempo,
       historyId,
       userId,
+      discount,
+      evidence,
+      ppn,
+      price,
+      quantity,
     } = params;
 
     try {
-      const totalAmount = quantity * price + ppn;
       const supplier = await prisma.supplier.create({
         data: {
           supplierCompany: {
@@ -37,13 +102,15 @@ class SupplierService {
             },
           },
 
-          discount,
-          evidence,
+          jatuhTempo,
+          nomorFaktur,
           paymentStatus,
-          price,
-          quantity,
-          ppn,
           totalAmount,
+          evidence,
+          price,
+          ppn,
+          quantity,
+          discount,
           date,
         },
         include: {
@@ -67,21 +134,67 @@ class SupplierService {
     userId: string,
     page?: number,
     pageSize?: number,
-    supplierCompanyId?: number
+    supplierCompanyId?: number,
+    dueDateFilter?: "overdue" | "next_3_days" | "next_7_days" | "upcoming",
+    paidFilter?: "paid" | "unpaid"
   ) {
     try {
-
-
-
       const totalSupplier = await prisma.supplier.count();
 
       const pagination = paginationHelper(page, pageSize, totalSupplier);
 
+      // Buat tanggal hari ini dalam UTC (jam 00:00 UTC)
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+
+      // Buat batas akhir next 3 days dalam UTC (jam 23:59:59.999 UTC pada 24 Juni)
+      const next3Days = new Date(today);
+      next3Days.setUTCDate(today.getUTCDate() + 2);
+      next3Days.setUTCHours(23, 59, 59, 999);
+
+      // Next 7 days juga
+      const next7Days = new Date(today);
+      next7Days.setUTCDate(today.getUTCDate() + 6);
+      next7Days.setUTCHours(23, 59, 59, 999);
+
+      const filterMap: Record<string, object> = {
+        overdue: {
+          jatuhTempo: { lt: today }, // < hari ini = lewat
+        },
+        next_3_days: {
+          jatuhTempo: { gte: today, lte: next3Days }, // termasuk hari ini
+        },
+        next_7_days: {
+          jatuhTempo: { gte: today, lte: next7Days },
+        },
+        upcoming: {
+          jatuhTempo: { gt: next7Days },
+        },
+      };
+
+      const filterJatuhTempo: Record<string, object> = {
+        paid: {
+          paymentStatus: "PAID",
+        },
+        unpaid: {
+          paymentStatus: "UNPAID",
+        },
+      };
+
+      const jatuhTempoFilter = dueDateFilter
+        ? filterMap[dueDateFilter] || {}
+        : {};
+
+      const paymentStatusFilter = paidFilter
+        ? filterJatuhTempo[paidFilter] || {}
+        : {};
 
       const supplier = await prisma.supplier.findMany({
         where: {
           historyId,
           ...(supplierCompanyId ? { supplierCompanyId } : {}),
+          ...jatuhTempoFilter,
+          ...paymentStatusFilter,
         },
         include: {
           supplierCompany: {
@@ -91,8 +204,11 @@ class SupplierService {
             },
           },
         },
-        skip: pagination.skip,
-        take: pagination.take,
+        orderBy: {
+          date: "asc",
+        },
+        // skip: pagination.skip,
+        // take: pagination.take,
       });
 
       return { supplier, totalPage: pagination.totalPage };
@@ -126,10 +242,10 @@ class SupplierService {
   async getPaymentStatusTotal(historyId?: string) {
     try {
       const totalPaymentByStatus = await prisma.supplier.groupBy({
-        by: ['paymentStatus'],
+        by: ["paymentStatus"],
         where: {
           paymentStatus: {
-            in: ['PAID', 'UNPAID'],
+            in: ["PAID", "UNPAID"],
           },
           histories: {
             id: historyId,
@@ -155,10 +271,10 @@ class SupplierService {
       // );
 
       const totalPaid = totalPaymentByStatus.find(
-        (status) => status.paymentStatus === 'PAID',
+        (status) => status.paymentStatus === "PAID"
       );
       const totalUnpaid = totalPaymentByStatus.find(
-        (status) => status.paymentStatus === 'UNPAID',
+        (status) => status.paymentStatus === "UNPAID"
       );
 
       return {
@@ -173,7 +289,7 @@ class SupplierService {
 
   async getPaymentTotalBySupplier(
     historyId: string,
-    paymentStatus: 'PAID' | 'UNPAID',
+    paymentStatus: "PAID" | "UNPAID"
   ) {
     try {
       const suppliers = await prisma.supplier.findMany({
@@ -221,7 +337,7 @@ class SupplierService {
       }, []);
 
       const payment = Object.values(results).filter(
-        (item: any) => item.totalAmount > 0,
+        (item: any) => item.totalAmount > 0
       );
 
       return {
@@ -233,22 +349,84 @@ class SupplierService {
     }
   }
 
-  async updateSupplier(id: string, params: CreateSupplierDTO) {
+  // async updateSupplier(id: string, params: CreateSupplierDTO) {
+  //   const {
+  //     discount,
+  //     evidence,
+  //     paymentStatus,
+  //     price,
+  //     quantity,
+  //     ppn,
+  //     supplierCompanyId,
+  //     date,
+  //     historyId,
+  //     userId,
+  //   } = params;
+  //   try {
+  //     const totalAmount = quantity * price + ppn;
+
+  //     const supplier = await prisma.supplier.update({
+  //       where: {
+  //         id,
+  //       },
+  //       data: {
+  //         supplierCompany: {
+  //           connect: {
+  //             id: supplierCompanyId,
+  //           },
+  //         },
+  //         histories: {
+  //           connect: {
+  //             id: historyId,
+  //           },
+  //         },
+  //         user: {
+  //           connect: {
+  //             id: userId,
+  //           },
+  //         },
+  //         discount,
+  //         evidence,
+  //         paymentStatus,
+  //         price,
+  //         quantity,
+  //         ppn,
+  //         date,
+  //         totalAmount,
+  //       },
+  //       include: {
+  //         supplierCompany: {
+  //           select: {
+  //             id: true,
+  //             name: true,
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     return supplier;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  async updateSupplier(id: string, params: CreateSupplierDTOV2) {
     const {
-      discount,
-      evidence,
+      nomorFaktur,
       paymentStatus,
-      price,
-      quantity,
-      ppn,
       supplierCompanyId,
       date,
+      totalAmount,
       historyId,
       userId,
+      jatuhTempo,
+      discount,
+      evidence,
+      ppn,
+      price,
+      quantity,
     } = params;
     try {
-      const totalAmount = quantity * price + ppn;
-
       const supplier = await prisma.supplier.update({
         where: {
           id,
@@ -269,14 +447,16 @@ class SupplierService {
               id: userId,
             },
           },
-          discount,
-          evidence,
+          nomorFaktur,
           paymentStatus,
-          price,
-          quantity,
-          ppn,
           date,
           totalAmount,
+          jatuhTempo,
+          discount,
+          evidence,
+          ppn,
+          price,
+          quantity,
         },
         include: {
           supplierCompany: {
@@ -294,7 +474,7 @@ class SupplierService {
     }
   }
 
-  async updateSupplierStatus(id: string[], paymentStatus: 'PAID' | 'UNPAID') {
+  async updateSupplierStatus(id: string[], paymentStatus: "PAID" | "UNPAID") {
     try {
       const supplier = await prisma.supplier.updateMany({
         where: {

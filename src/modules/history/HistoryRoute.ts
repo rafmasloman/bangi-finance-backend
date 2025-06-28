@@ -1,7 +1,7 @@
-import { Router } from 'express';
-import { authMiddleware } from '../../middleware/auth.middleware';
-import HistoryController from './HistoryController';
-import { checkAccess } from '../../middleware/role.middleware';
+import { Router } from "express";
+import { authMiddleware } from "../../middleware/auth.middleware";
+import HistoryController from "./HistoryController";
+import { checkAccess } from "../../middleware/role.middleware";
 
 class HistoryRoute {
   private historyController: HistoryController;
@@ -14,81 +14,89 @@ class HistoryRoute {
 
   createHistoryRoute() {
     return this.router.post(
-      '/',
+      "/",
       authMiddleware,
-      this.historyController.createHistory,
+      this.historyController.createHistory
     );
   }
 
   getAllHistorysRoute() {
     return this.router.get(
-      '/',
+      "/",
       authMiddleware,
-      this.historyController.getAllHistories,
+      this.historyController.getAllHistories
     );
   }
 
   getDetailHistoryRoute() {
     return this.router.get(
-      '/:id',
+      "/:id",
       authMiddleware,
-      this.historyController.getDetailHistory,
+      this.historyController.getDetailHistory
     );
   }
 
   getExpenseServiceMasterDataStats() {
     return this.router.get(
-      '/masters-expense/stats',
+      "/masters-expense/stats",
       authMiddleware,
-      this.historyController.getHistoryExpenseMasterDataStats,
+      this.historyController.getHistoryExpenseMasterDataStats
     );
   }
 
   getHistoryServiceDataStats() {
     return this.router.get(
-      '/:historyId/stats',
+      "/:historyId/stats",
       authMiddleware,
-      this.historyController.getHistoryRemainingData,
+      this.historyController.getHistoryRemainingData
     );
   }
 
   getHistoriesUser() {
     return this.router.get(
-      '/users/master',
+      "/users/master",
       authMiddleware,
-      this.historyController.getAllHistoryByUser,
+      this.historyController.getAllHistoryByUser
+    );
+  }
+
+  exportDataHistory() {
+    return this.router.get(
+      "/:id/export-excel",
+      authMiddleware,
+      this.historyController.exportExcelDataHistory
     );
   }
 
   getMDRHistory() {
     return this.router.get(
-      '/:id/mdr',
+      "/:id/mdr",
       authMiddleware,
-      this.historyController.getMDRHistory,
+      this.historyController.getMDRHistory
     );
   }
 
   updateHistory() {
     return this.router.put(
-      '/:id',
+      "/:id",
       authMiddleware,
-      this.historyController.updateHistory,
+      this.historyController.updateHistory
     );
   }
 
   updateMDR() {
     return this.router.put(
-      '/:id/mdr',
+      "/:id/mdr",
       authMiddleware,
-      this.historyController.updateMDR,
+      this.historyController.updateMDR
     );
   }
 
   deleteHistory() {
     return this.router.delete(
-      '/:id',
+      "/:id",
       authMiddleware,
-      this.historyController.deleteHistory,
+      this.historyController.deleteHistory
     );
   }
 
@@ -102,6 +110,7 @@ class HistoryRoute {
     this.getMDRHistory();
     this.updateHistory();
     this.updateMDR();
+    this.exportDataHistory();
     this.deleteHistory();
 
     return this.router;

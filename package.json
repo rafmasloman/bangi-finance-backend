@@ -2,7 +2,8 @@
   "scripts": {
     "start:build": "npx tsc",
     "start": "node dist/app.js",
-    "start:dev": "nodemon app.ts"
+    "start:dev": "nodemon app.ts",
+    "seed": "ts-node prisma/seed/generate.seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",

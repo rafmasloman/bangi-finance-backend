@@ -1,16 +1,16 @@
-import { NextFunction, Request, Response } from 'express';
-import { CreateHistoryDTO, UpdateHistoryDTO } from '../../dto/HistoryDTO';
-import HistoryService from './HistoryService';
-import { sendSuccessResponse } from '../../helpers/response.helper';
+import { NextFunction, Request, Response } from "express";
+import { CreateHistoryDTO, UpdateHistoryDTO } from "../../dto/HistoryDTO";
+import HistoryService from "./HistoryService";
+import { sendSuccessResponse } from "../../helpers/response.helper";
 import {
   CREATE_HISTORY_RESPONSE_MESSAGE,
   DELETE_HISTORY_RESPONSE_MESSAGE,
   READ_DETAIL_HISTORY_RESPONSE_MESSAGE,
   READ_HISTORIES_RESPONSE_MESSAGE,
   UPDATE_HISTORY_RESPONSE_MESSAGE,
-} from '../../contants/message_response';
-import { BaseRequestType } from '../../middleware/auth.middleware';
-import { ExpenseCategories } from '@prisma/client';
+} from "../../contants/message_response";
+import { BaseRequestType } from "../../middleware/auth.middleware";
+import { ExpenseCategories } from "@prisma/client";
 
 class HistoryController {
   private historyService: HistoryService;
@@ -49,8 +49,38 @@ class HistoryController {
         res,
         history,
         CREATE_HISTORY_RESPONSE_MESSAGE,
-        201,
+        201
       );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  exportExcelDataHistory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+
+      const historyName = await this.historyService.getHistoryName(id);
+
+      const filename = historyName.toLowerCase().replace(/\s+/g, "_");
+      console.log("history name = ", filename);
+
+      const excelBuffer = await this.historyService.exportAllDataByHistory(id);
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        `Content-Disposition`,
+        `attachment; filename=${filename}.xlsx`
+      );
+
+      res.end(excelBuffer);
     } catch (error) {
       next(error);
     }
@@ -65,7 +95,7 @@ class HistoryController {
       return sendSuccessResponse(
         res,
         histories,
-        READ_HISTORIES_RESPONSE_MESSAGE,
+        READ_HISTORIES_RESPONSE_MESSAGE
       );
     } catch (error) {
       next(error);
@@ -75,7 +105,7 @@ class HistoryController {
   getDetailHistory = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
@@ -85,7 +115,7 @@ class HistoryController {
       return sendSuccessResponse(
         res,
         history,
-        READ_DETAIL_HISTORY_RESPONSE_MESSAGE,
+        READ_DETAIL_HISTORY_RESPONSE_MESSAGE
       );
     } catch (error) {
       next(error);
@@ -95,7 +125,7 @@ class HistoryController {
   getHistoryExpenseMasterDataStats = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { historyId, name } = req.query as {
@@ -106,13 +136,13 @@ class HistoryController {
       const historyExpenseStats =
         await this.historyService.getHistoryExpenseMasterDataStats(
           historyId,
-          name,
+          name
         );
 
       return sendSuccessResponse(
         res,
         historyExpenseStats,
-        'Expense Master Data Stats fetched succesfully',
+        "Expense Master Data Stats fetched succesfully"
       );
     } catch (error) {
       next(error);
@@ -122,7 +152,7 @@ class HistoryController {
   getHistoryRemainingData = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { historyId } = req.params;
@@ -136,7 +166,7 @@ class HistoryController {
       return sendSuccessResponse(
         res,
         historyExpenseStats,
-        'History remaining data fetched succesfully',
+        "History remaining data fetched succesfully"
       );
     } catch (error) {
       next(error);
@@ -146,23 +176,23 @@ class HistoryController {
   getAllHistoryByUser = async (
     req: BaseRequestType,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const userId = req.user?.id;
 
       if (!userId) {
-        throw new Error('User Not Found');
+        throw new Error("User Not Found");
       }
 
       const historiesUser = await this.historyService.getAllHistoryByUserId(
-        userId,
+        userId
       );
 
       return sendSuccessResponse(
         res,
         historiesUser,
-        'Histories User fetch succesfully',
+        "Histories User fetch succesfully"
       );
     } catch (error) {
       next(error);
@@ -175,7 +205,7 @@ class HistoryController {
 
       const mdr = await this.historyService.getMDRHistory(id);
 
-      return sendSuccessResponse(res, mdr, 'MDR fetched successfully');
+      return sendSuccessResponse(res, mdr, "MDR fetched successfully");
     } catch (error) {
       next(error);
     }
@@ -206,7 +236,7 @@ class HistoryController {
         res,
         history,
         UPDATE_HISTORY_RESPONSE_MESSAGE,
-        201,
+        201
       );
     } catch (error) {
       next(error);
@@ -223,8 +253,8 @@ class HistoryController {
       return sendSuccessResponse(
         res,
         updateMDR,
-        'MDR updated successfully',
-        201,
+        "MDR updated successfully",
+        201
       );
     } catch (error) {
       next(error);

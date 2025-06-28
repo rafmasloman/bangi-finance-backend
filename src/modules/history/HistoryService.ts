@@ -1,13 +1,15 @@
-import { ExpenseCategories } from '@prisma/client';
-import { CreateHistoryDTO, UpdateHistoryDTO } from '../../dto/HistoryDTO';
-import prisma from '../../libs/prisma/orm.libs';
-import ExpenseService from '../expense/ExpenseService';
-import { getPaymentStatusTotalUtils } from '../../utils/supplier.utils';
+import { ExpenseCategories } from "@prisma/client";
+import { CreateHistoryDTO, UpdateHistoryDTO } from "../../dto/HistoryDTO";
+import prisma from "../../libs/prisma/orm.libs";
+import ExpenseService from "../expense/ExpenseService";
+import { getPaymentStatusTotalUtils } from "../../utils/supplier.utils";
+import ExcelJS from "exceljs";
+import { exportAllDataByHistory } from "../../utils/history.utils";
 
 class HistoryService {
   async createHistory(payload: CreateHistoryDTO) {
     try {
-      const historyTitle = `Buku ${payload.month} ${payload.year}`;
+      const historyTitle = `${payload.month} ${payload.year}`;
       const history = await prisma.history.create({
         data: {
           title: historyTitle,
@@ -31,6 +33,37 @@ class HistoryService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async getHistoryName(historyId: string) {
+    try {
+      const historyName = await prisma.history.findFirst({
+        where: {
+          id: historyId,
+        },
+        select: {
+          title: true,
+          month: true,
+          year: true,
+        },
+      });
+
+      const generateName = `${historyName?.title} ${historyName?.month} ${historyName?.year}`;
+
+      return generateName;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async exportAllDataByHistory(historyId: string) {
+    const workbook = new ExcelJS.Workbook();
+
+    await exportAllDataByHistory("all", historyId, workbook);
+
+    // Simpan workbook ke buffer
+    const buffer = await workbook.xlsx.writeBuffer();
+    return Buffer.from(buffer);
   }
 
   async getAllHistories(month?: string, year?: string) {
@@ -78,7 +111,7 @@ class HistoryService {
 
   async getHistoryExpenseMasterDataStats(
     historyId: string,
-    expenseName: ExpenseCategories,
+    expenseName: ExpenseCategories
   ) {
     try {
       const expenseServiceStats = await prisma.expense.findMany({
@@ -95,7 +128,7 @@ class HistoryService {
         (acc, item) => {
           return acc + item.price;
         },
-        0,
+        0
       );
 
       return {
@@ -110,12 +143,12 @@ class HistoryService {
 
   async getHistoryServiceRemainingData(
     historyId: string,
-    name: ExpenseCategories,
+    name: ExpenseCategories
   ) {
     try {
       const remainingService = await this.getHistoryExpenseMasterDataStats(
         historyId,
-        name,
+        name
       );
 
       const history = await prisma.history.findFirst({
@@ -129,7 +162,7 @@ class HistoryService {
       });
 
       if (!history || !name) {
-        throw new Error('History Not Found');
+        throw new Error("History Not Found");
       }
 
       const expenseService = await prisma.income.findMany({
@@ -150,12 +183,12 @@ class HistoryService {
 
       let remainingServiceData = 0;
 
-      if (name.toLowerCase() === 'SERVICE MANAJEMEN'.toLowerCase()) {
+      if (name.toLowerCase() === "SERVICE MANAJEMEN".toLowerCase()) {
         remainingServiceData =
           managementServiceAnalytics -
           (remainingService.service.managementExpense +
             (history?.remainingManagementService ?? 0));
-      } else if (name.toLowerCase() === 'SERVICE KARYAWAN'.toLowerCase()) {
+      } else if (name.toLowerCase() === "SERVICE KARYAWAN".toLowerCase()) {
         remainingServiceData =
           employeServiceAnalytics -
           (remainingService.service.managementExpense +
@@ -188,7 +221,7 @@ class HistoryService {
 
       const totalSalesExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'SALES',
+          expenseCategory: "SALES",
           historyId,
         },
         _sum: {
@@ -198,7 +231,7 @@ class HistoryService {
 
       const totalTaxExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'PPN',
+          expenseCategory: "PPN",
           historyId,
         },
         _sum: {
@@ -208,7 +241,7 @@ class HistoryService {
 
       const totalManagementServiceExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'SERVICE_MANAJEMEN',
+          expenseCategory: "SERVICE_MANAJEMEN",
           historyId,
         },
         _sum: {
@@ -218,7 +251,7 @@ class HistoryService {
 
       const totalEmployeeServiceExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'SERVICE_KARYAWAN',
+          expenseCategory: "SERVICE_KARYAWAN",
           historyId,
         },
         _sum: {
@@ -228,7 +261,7 @@ class HistoryService {
 
       const totalEmployeePayrollExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'GAJI_KARYAWAN',
+          expenseCategory: "GAJI_KARYAWAN",
           historyId,
         },
         _sum: {
@@ -238,7 +271,7 @@ class HistoryService {
 
       const totalOperationalExpense = await prisma.expense.aggregate({
         where: {
-          expenseCategory: 'OPERASIONAL',
+          expenseCategory: "OPERASIONAL",
           historyId,
         },
         _sum: {
@@ -259,7 +292,7 @@ class HistoryService {
       });
 
       if (!history) {
-        throw new Error('History Not Found');
+        throw new Error("History Not Found");
       }
 
       const mdr = await this.getMDRHistory(historyId);
@@ -316,10 +349,10 @@ class HistoryService {
 
       return {
         remainingMontEmployeeService: Math.round(
-          remainingMontEmployeeService,
+          remainingMontEmployeeService
         ).toFixed(3),
         remainingMonthManagementService: Math.round(
-          remainingMonthManagementService,
+          remainingMonthManagementService
         ).toFixed(3),
         remainingMonthTax,
         remainingSales,
@@ -333,7 +366,7 @@ class HistoryService {
   async getMDRHistory(id: string) {
     try {
       const totalCollection = await prisma.income.groupBy({
-        by: ['historyId'],
+        by: ["historyId"],
         where: {
           historyId: id,
         },
@@ -341,6 +374,8 @@ class HistoryService {
           totalCollection: true,
         },
       });
+
+      console.log("total mdr = ", totalCollection);
 
       const mdr = await prisma.history.findFirst({
         where: {
