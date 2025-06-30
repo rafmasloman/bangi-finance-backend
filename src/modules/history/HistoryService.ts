@@ -73,6 +73,9 @@ class HistoryService {
           ...(month && { month }),
           ...(year && { year }),
         },
+        orderBy: {
+          date: "asc",
+        },
       });
 
       return history;
@@ -86,6 +89,9 @@ class HistoryService {
       const historiesUser = await prisma.history.findMany({
         where: {
           userId,
+        },
+        orderBy: {
+          date: "asc",
         },
       });
 
